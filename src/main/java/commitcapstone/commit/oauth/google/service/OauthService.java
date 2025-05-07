@@ -2,14 +2,19 @@ package commitcapstone.commit.oauth.google.service;
 
 
 import commitcapstone.commit.oauth.google.controller.OauthController;
+import commitcapstone.commit.oauth.google.dto.googleInfo;
+import commitcapstone.commit.oauth.google.dto.googleOauthAccessToken;
+import commitcapstone.commit.oauth.google.dto.googleToken;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.net.URL;
-import java.util.List;
-import java.util.Map;
 
 @Service
 public class OauthService {
@@ -34,7 +39,7 @@ public class OauthService {
         String baseURL = "https://accounts.google.com/o/oauth2/v2/auth?";
         return UriComponentsBuilder.
                 fromUriString(baseURL)
-                .queryParam("scope",scope_1 + " " + scope_2) // 🔥 한 줄로 붙이기
+                .queryParam("scope",scope_1 + " " + scope_2)
                 .queryParam("client_id", clientId)
                 .queryParam("redirect_uri", redirectUri)
                 .queryParam("response_type", "code")
@@ -44,7 +49,63 @@ public class OauthService {
 
     }
     //todo : scope에서 지정한 정보를 어떻게 어디서 가져오는지 구현 필요.... 2025 - 05 - 07 - am 2:22
-//    private Map<String, String> getToken() {
-//
-//    }
+    public googleToken getGoogleToken(String code) {
+        String baseURL = "https://oauth2.googleapis.com/token";
+        WebClient client = WebClient.builder()
+                .baseUrl(baseURL)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .build();
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("grant_type", "authorization_code");
+        formData.add("code", code);
+        formData.add("client_id", clientId);
+        formData.add("redirect_uri", redirectUri);
+        formData.add("client_secret", clientSecret);
+
+
+        return client.post()
+                .body(BodyInserters.fromFormData(formData))
+                .retrieve()
+                .bodyToMono(googleToken.class).block();
+    }
+
+
+    public googleInfo getGoogleInfo(String accessToken) {
+        String baseURL = "https://www.googleapis.com/oauth2/v3/userinfo";
+
+        WebClient client = WebClient.builder()
+                .baseUrl(baseURL)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
+                .build();
+
+        return client.get()
+                .retrieve()
+                .bodyToMono(googleInfo.class)
+                .block();
+    }
+
+
+    public googleOauthAccessToken getGoogleAccesstoken(String refreshToken) {
+        String baseURL = "https://oauth2.googleapis.com/token";
+        WebClient client = WebClient.builder()
+                .baseUrl(baseURL)
+                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
+                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
+                .build();
+
+
+        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
+        formData.add("client_id", clientId);
+        formData.add("client_secret", clientSecret);
+        formData.add("grant_type", "refresh_token");
+        formData.add("refresh_token", refreshToken);
+
+
+
+        return client.post()
+                .body(BodyInserters.fromFormData(formData))
+                .retrieve()
+                .bodyToMono(googleOauthAccessToken.class).block();
+    }
 }
