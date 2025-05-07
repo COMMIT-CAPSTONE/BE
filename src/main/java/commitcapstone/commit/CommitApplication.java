@@ -10,4 +10,5 @@ public class CommitApplication {
 		SpringApplication.run(CommitApplication.class, args);
 	}
 
+
 }
