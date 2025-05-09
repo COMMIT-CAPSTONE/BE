@@ -1,7 +1,7 @@
 package commitcapstone.commit.oauth.google.service;
 
 
-import commitcapstone.commit.oauth.google.controller.OauthController;
+import commitcapstone.commit.oauth.google.controller.googleOauthController;
 import commitcapstone.commit.oauth.google.dto.googleInfo;
 import commitcapstone.commit.oauth.google.dto.googleOauthAccessToken;
 import commitcapstone.commit.oauth.google.dto.googleToken;
@@ -17,8 +17,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class OauthService {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OauthController.class);
+public class googleService {
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(googleOauthController.class);
 
     @Value("${spring.oauth2.google.client-id}")
     private String clientId;
@@ -27,9 +27,7 @@ public class OauthService {
     @Value("${spring.oauth2.google.redirect-uri}")
     private String redirectUri;
     @Value("${spring.oauth2.google.scope[0]}")
-    private String scope_1;
-    @Value("${spring.oauth2.google.scope[1]}")
-    private String scope_2;
+    private String scope;
 
 
 
@@ -39,7 +37,7 @@ public class OauthService {
         String baseURL = "https://accounts.google.com/o/oauth2/v2/auth?";
         return UriComponentsBuilder.
                 fromUriString(baseURL)
-                .queryParam("scope",scope_1 + " " + scope_2)
+                .queryParam("scope", scope)
                 .queryParam("client_id", clientId)
                 .queryParam("redirect_uri", redirectUri)
                 .queryParam("response_type", "code")
@@ -70,6 +68,8 @@ public class OauthService {
                 .bodyToMono(googleToken.class).block();
     }
 
+    // todo : 지금 accesstoken 이용해서 api 호출하는 방식으로 email 구하고있는데 이러면 비용발생하니까
+    // id_token encoding 해서 email 구해오는 방식으로 리팩토링 필요
 
     public googleInfo getGoogleInfo(String accessToken) {
         String baseURL = "https://www.googleapis.com/oauth2/v3/userinfo";
@@ -91,7 +91,6 @@ public class OauthService {
         WebClient client = WebClient.builder()
                 .baseUrl(baseURL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .defaultHeader(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
                 .build();
 
 
