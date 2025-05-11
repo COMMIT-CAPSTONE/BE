@@ -24,9 +24,6 @@ public class UserEntity {
     @Column(name = "oauth_id", nullable = false, unique = true, length = 100)
     private String oauthId; // 사용자의 해당 소셜 로그인 고유 아이디
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false, length = 50)
     private String nickname; // 사용자 닉네임
 
