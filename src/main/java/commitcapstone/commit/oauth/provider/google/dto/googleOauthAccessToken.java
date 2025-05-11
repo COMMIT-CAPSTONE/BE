@@ -1,19 +1,13 @@
-package commitcapstone.commit.oauth.google.dto;
+package commitcapstone.commit.oauth.provider.google.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
 
-@Data
-public class googleToken {
-
+public class googleOauthAccessToken {
     @JsonProperty("access_token")
     private String accessToken;
 
     @JsonProperty("expires_in")
-    private long expiresIn;
-
-    @JsonProperty("refresh_token")
-    private String refreshToken;
+    private Integer expiresIn;
 
     @JsonProperty("scope")
     private String scope;

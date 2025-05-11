@@ -1,9 +1,9 @@
-package commitcapstone.commit.oauth.google.dto;
+package commitcapstone.commit.oauth.provider.google.dto;
 
 import lombok.Data;
 
 @Data
-public class googleInfo {
+public class googleValidToken {
 
     private String sub;
     private String name;
