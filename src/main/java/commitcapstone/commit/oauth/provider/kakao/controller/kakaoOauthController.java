@@ -1,64 +1,104 @@
 package commitcapstone.commit.oauth.provider.kakao.controller;
 
+
 import commitcapstone.commit.oauth.OauthController;
-import commitcapstone.commit.oauth.accessTokenRequest;
-import commitcapstone.commit.oauth.provider.kakao.dto.kakaoOauthAccessToken;
+import commitcapstone.commit.oauth.config.jwt.JwtTokenProvider;
+import commitcapstone.commit.oauth.provider.kakao.dto.kakaoInfo;
 import commitcapstone.commit.oauth.provider.kakao.dto.kakaoToken;
-import commitcapstone.commit.oauth.provider.kakao.dto.kakaoValidToken;
 import commitcapstone.commit.oauth.provider.kakao.service.kakaoService;
-import commitcapstone.commit.oauth.provider.naver.dto.naverValidToken;
 import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.reactive.result.view.RedirectView;
+
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
-public class kakaoOauthController implements OauthController<kakaoToken, kakaoOauthAccessToken, kakaoValidToken> {
+@RequestMapping("/oauth/kakao")
+public class kakaoOauthController implements OauthController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(kakaoOauthController.class);
     private final kakaoService oauthService;
-
-    public kakaoOauthController(kakaoService oauthService) {
+    private final JwtTokenProvider jwtTokenProvider;
+    public kakaoOauthController(kakaoService oauthService, JwtTokenProvider jwtTokenProvider) {
         this.oauthService = oauthService;
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
 
-    @GetMapping("/oauth/kakao/login")
-    public ResponseEntity<String> login(HttpSession session) {
-        String OauthURL = oauthService.createOauthURL(session);
+    @GetMapping("/login")
+    public  ResponseEntity<Map<String, String>> login(HttpSession session) {
 
-        return ResponseEntity.ok(OauthURL);
+        String state = UUID.randomUUID().toString();
+        session.setAttribute("state", state);
+
+        String OauthURL = oauthService.createOauthURL(state);
+        return ResponseEntity.ok(Map.of("oauth_url", OauthURL));
+
     }
 
 
-    @GetMapping("/oauth/kakao/redirect")
-    public ResponseEntity<kakaoToken> redirect(@RequestParam String code, String state, HttpSession session) {
-        kakaoToken token = oauthService.getToken(session, state, code);
-        final String refreshToken = token.getRefreshToken();
-        session.setAttribute("refreshToken", token.getRefreshToken());
-        LOGGER.info("저장한 리프레시토큰 : " + refreshToken);
-        LOGGER.info("세션 아이디 : " + session.getId());
-        return ResponseEntity.ok(token);
+    @GetMapping("/redirect")
+    public  ResponseEntity<Map<String, String>> redirect(@RequestParam String code, String state, HttpSession session) {
+        String sessionState = (String) session.getAttribute("state");
+
+        if (sessionState == null || !sessionState.equals(state)) {
+            throw new IllegalStateException("Invalid kakaoOauth state");
+        }
+        // kakao에 토큰 요청
+        kakaoToken token = oauthService.getToken(state, code);
+
+        // kakao에 사용자 정보 요청 (email과 고유 ID)
+        kakaoInfo userInfo = oauthService.getUserInfo(token.getAccessToken());
+
+        // 자체 JWT 생성
+        String email = userInfo.getKakaoAccount().getEmail();
+        LOGGER.info("이메일 정보 획득: "  + email);
+
+        String accessToken = jwtTokenProvider.createAccessToken(email);
+        String refreshToken = jwtTokenProvider.createRefreshToken(email);
+
+        String sessionId = UUID.randomUUID().toString();
+        session.setAttribute(sessionId, accessToken);
+
+        session.setAttribute("refreshToken", refreshToken);
+
+
+
+
+        return ResponseEntity.ok(Map.of("session_id" , sessionId));
     }
 
-    @PostMapping("oauth/kakao/token")
-    public ResponseEntity<kakaoOauthAccessToken> refresh(HttpSession session) {
-        String refreshToken = (String) session.getAttribute("refreshToken");
-        LOGGER.info("꺼낸 리프레시토큰 : " + refreshToken);
-        LOGGER.info("세션 아이디 : " + session.getId());
-        if (refreshToken == null || refreshToken.isEmpty()) {
-            throw new RuntimeException("세션에 저장된 refreshToken 비어있음");
+    @Override
+    public ResponseEntity<Map<String, String>> exchange(Map<String, String> body, HttpSession session) {
+        String sessionId = body.get("session_id");
+
+        if (sessionId == null) {
+            throw new RuntimeException("kakao Oauth exchange session_id is NULL");
         }
 
-        kakaoOauthAccessToken token = oauthService.getReToken(refreshToken);
-        return ResponseEntity.ok(token);
+        LOGGER.info("session 값 보자 ㅅㅂ : " +  sessionId);
+
+        String accessToken = (String) session.getAttribute(sessionId);
+        if (accessToken == null) {
+            throw new RuntimeException("kakao Oauth exchange accessToken is NULL");
+        }
+
+
+//            //todo: 토큰 검증 구현 필요
+//            if(jwtTokenProvider.validateToken(accessToken)) {
+//
+//            }
+
+        session.removeAttribute("sessionCode");
+
+        return ResponseEntity.ok(Map.of("accessToken", accessToken));
     }
 
 
 
-    @PostMapping("oauth/kakao/verify-accesstoken")
-    public ResponseEntity<kakaoValidToken> verifyAccessToken(@RequestBody accessTokenRequest request) {
-
-        kakaoValidToken data = oauthService.verifyToken(request.getAccessToken());
-        return ResponseEntity.ok(data);
-    }
 }

@@ -4,17 +4,15 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.reactive.result.view.RedirectView;
 
-public interface OauthController<T, R, S> {
+import java.util.Map;
 
-        public ResponseEntity<String> login(HttpSession session);
+public interface OauthController {
 
-        public ResponseEntity<T> redirect(@RequestParam String code, String state, HttpSession session);
+        public ResponseEntity<Map<String, String>> login(HttpSession session);
 
-        public ResponseEntity<R> refresh(HttpSession session);
+        public ResponseEntity<Map<String, String>> redirect(@RequestParam String code, String state, HttpSession session);
 
-//        public ResponseEntity logout();
-
-        public ResponseEntity<S> verifyAccessToken(@RequestBody accessTokenRequest request);
-
+        public ResponseEntity<Map<String, String>> exchange(@RequestBody Map<String, String> body, HttpSession session);
 }

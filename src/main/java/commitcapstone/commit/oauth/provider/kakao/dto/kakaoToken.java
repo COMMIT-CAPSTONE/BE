@@ -24,6 +24,4 @@ public class kakaoToken {
     @JsonProperty("token_type")
     private String tokenType;
 
-    @JsonProperty("id_token")
-    private String idToken;
 }

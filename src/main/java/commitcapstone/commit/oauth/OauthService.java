@@ -1,14 +1,12 @@
 package commitcapstone.commit.oauth;
 
-import jakarta.servlet.http.HttpSession;
 
-public interface OauthService<T, R, S> {
+public interface OauthService<T, R> {
 
-    public String createOauthURL(HttpSession session);
+    public String createOauthURL(String state);
 
-    public T getToken(HttpSession session, String state, String code);
+    public T getToken(String state, String code);
 
-    public R getReToken(String refereshToken);
+    public R getUserInfo(String accessToken);
 
-    public S verifyToken(String token);
 }

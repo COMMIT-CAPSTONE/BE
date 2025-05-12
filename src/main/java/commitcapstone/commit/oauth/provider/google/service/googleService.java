@@ -1,9 +1,8 @@
 package commitcapstone.commit.oauth.provider.google.service;
 import commitcapstone.commit.oauth.OauthController;
-import commitcapstone.commit.oauth.provider.google.dto.googleOauthAccessToken;
+import commitcapstone.commit.oauth.OauthService;
+import commitcapstone.commit.oauth.provider.google.dto.googleInfo;
 import commitcapstone.commit.oauth.provider.google.dto.googleToken;
-import commitcapstone.commit.oauth.provider.google.dto.googleValidToken;
-import jakarta.servlet.http.HttpSession;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,10 +14,8 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.UUID;
-
 @Service
-public class googleService {
+public class googleService implements OauthService<googleToken, googleInfo> {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OauthController.class);
 
     @Value("${spring.oauth2.google.client-id}")
@@ -33,12 +30,9 @@ public class googleService {
 
 
 
-    public String createOauthURL(HttpSession session) {
+    public String createOauthURL(String state) {
 
         String baseURL = "https://accounts.google.com/o/oauth2/v2/auth?";
-
-        String state = UUID.randomUUID().toString();
-        session.setAttribute("state", state);
 
         return UriComponentsBuilder.
                 fromUriString(baseURL)
@@ -46,25 +40,17 @@ public class googleService {
                 .queryParam("client_id", clientId)
                 .queryParam("redirect_uri", redirectUri)
                 .queryParam("response_type", "code")
-                .queryParam("access_type", "offline")
-                .queryParam("prompt", "consent")
                 .queryParam("state", state)
                 .toUriString();
 
     }
 
-    public googleToken getToken(HttpSession session, String state, String code) {
+    public googleToken getToken(String state, String code) {
         String baseURL = "https://oauth2.googleapis.com/token";
         WebClient client = WebClient.builder()
                 .baseUrl(baseURL)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
                 .build();
-
-        String sessionState = (String) session.getAttribute("state");
-
-        if (!state.equals(sessionState)) {
-            throw new RuntimeException("google state검증 에러");
-        }
 
         MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
         formData.add("grant_type", "authorization_code");
@@ -72,7 +58,7 @@ public class googleService {
         formData.add("client_id", clientId);
         formData.add("redirect_uri", redirectUri);
         formData.add("client_secret", clientSecret);
-        formData.add("state", sessionState);
+        formData.add("state", state);
 
 
         return client.post()
@@ -81,40 +67,19 @@ public class googleService {
                 .bodyToMono(googleToken.class).block();
     }
 
-
-    public googleOauthAccessToken getReToken(String refreshToken) {
-        String baseURL = "https://oauth2.googleapis.com/token";
-        WebClient client = WebClient.builder()
-                .baseUrl(baseURL)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-                .build();
-
-
-        MultiValueMap<String, String> formData = new LinkedMultiValueMap<>();
-        formData.add("client_id", clientId);
-        formData.add("client_secret", clientSecret);
-        formData.add("grant_type", "refresh_token");
-        formData.add("refresh_token", refreshToken);
-
-
-
-        return client.post()
-                .body(BodyInserters.fromFormData(formData))
-                .retrieve()
-                .bodyToMono(googleOauthAccessToken.class).block();
-    }
-
-        public googleValidToken verifyToken(String token) {
+    public googleInfo getUserInfo(String accessToken) {
         String baseURL = "https://www.googleapis.com/oauth2/v3/userinfo";
 
         WebClient client = WebClient.builder()
                 .baseUrl(baseURL)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
                 .build();
 
         return client.get()
                 .retrieve()
-                .bodyToMono(googleValidToken.class)
+                .bodyToMono(googleInfo.class)
                 .block();
     }
+
+
 }
