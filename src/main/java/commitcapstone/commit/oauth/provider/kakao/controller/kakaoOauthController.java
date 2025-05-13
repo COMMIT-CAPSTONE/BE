@@ -1,9 +1,7 @@
 package commitcapstone.commit.oauth.provider.kakao.controller;
 
 
-import commitcapstone.commit.oauth.OauthController;
 import commitcapstone.commit.oauth.config.jwt.JwtTokenProvider;
-import commitcapstone.commit.oauth.provider.kakao.dto.kakaoInfo;
 import commitcapstone.commit.oauth.provider.kakao.dto.kakaoToken;
 import commitcapstone.commit.oauth.provider.kakao.service.kakaoService;
 import jakarta.servlet.http.HttpSession;
@@ -13,14 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.reactive.result.view.RedirectView;
 
 import java.util.Map;
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/oauth/kakao")
-public class kakaoOauthController implements OauthController {
+public class kakaoOauthController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(kakaoOauthController.class);
     private final kakaoService oauthService;
     private final JwtTokenProvider jwtTokenProvider;
@@ -52,52 +49,9 @@ public class kakaoOauthController implements OauthController {
         // kakao에 토큰 요청
         kakaoToken token = oauthService.getToken(state, code);
 
-        // kakao에 사용자 정보 요청 (email과 고유 ID)
-        kakaoInfo userInfo = oauthService.getUserInfo(token.getAccessToken());
-
-        // 자체 JWT 생성
-        String email = userInfo.getKakaoAccount().getEmail();
-        LOGGER.info("이메일 정보 획득: "  + email);
-
-        String accessToken = jwtTokenProvider.createAccessToken(email);
-        String refreshToken = jwtTokenProvider.createRefreshToken(email);
-
-        String sessionId = UUID.randomUUID().toString();
-        session.setAttribute(sessionId, accessToken);
-
-        session.setAttribute("refreshToken", refreshToken);
-
-
-
-
-        return ResponseEntity.ok(Map.of("session_id" , sessionId));
+        return ResponseEntity.ok(Map.of("oauth_access_token" , token.getAccessToken()));
     }
 
-    @Override
-    public ResponseEntity<Map<String, String>> exchange(Map<String, String> body, HttpSession session) {
-        String sessionId = body.get("session_id");
-
-        if (sessionId == null) {
-            throw new RuntimeException("kakao Oauth exchange session_id is NULL");
-        }
-
-        LOGGER.info("session 값 보자 ㅅㅂ : " +  sessionId);
-
-        String accessToken = (String) session.getAttribute(sessionId);
-        if (accessToken == null) {
-            throw new RuntimeException("kakao Oauth exchange accessToken is NULL");
-        }
-
-
-//            //todo: 토큰 검증 구현 필요
-//            if(jwtTokenProvider.validateToken(accessToken)) {
-//
-//            }
-
-        session.removeAttribute("sessionCode");
-
-        return ResponseEntity.ok(Map.of("accessToken", accessToken));
-    }
 
 
 

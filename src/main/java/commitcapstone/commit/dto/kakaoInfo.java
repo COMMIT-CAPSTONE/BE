@@ -1,12 +1,12 @@
-package commitcapstone.commit.oauth.provider.kakao.dto;
+package commitcapstone.commit.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.Getter;
-import lombok.Setter;
 
 @Data
-public class kakaoInfo {
+public class kakaoInfo implements OauthUserInfo {
+
     @JsonProperty("id")
     private Long id;
 
@@ -15,9 +15,17 @@ public class kakaoInfo {
 
     @Getter
     public static class KakaoAccount {
-
         @JsonProperty("email")
         private String email;
+    }
 
+    @Override
+    public String getId() {
+        return id != null ? id.toString() : null;
+    }
+
+    @Override
+    public String getEmail() {
+        return kakaoAccount != null ? kakaoAccount.getEmail() : null;
     }
 }

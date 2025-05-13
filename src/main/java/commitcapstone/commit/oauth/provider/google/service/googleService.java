@@ -1,7 +1,5 @@
 package commitcapstone.commit.oauth.provider.google.service;
-import commitcapstone.commit.oauth.OauthController;
-import commitcapstone.commit.oauth.OauthService;
-import commitcapstone.commit.oauth.provider.google.dto.googleInfo;
+import commitcapstone.commit.oauth.controller.OauthController;
 import commitcapstone.commit.oauth.provider.google.dto.googleToken;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class googleService implements OauthService<googleToken, googleInfo> {
+public class googleService {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OauthController.class);
 
     @Value("${spring.oauth2.google.client-id}")
@@ -67,19 +65,6 @@ public class googleService implements OauthService<googleToken, googleInfo> {
                 .bodyToMono(googleToken.class).block();
     }
 
-    public googleInfo getUserInfo(String accessToken) {
-        String baseURL = "https://www.googleapis.com/oauth2/v3/userinfo";
-
-        WebClient client = WebClient.builder()
-                .baseUrl(baseURL)
-                .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .build();
-
-        return client.get()
-                .retrieve()
-                .bodyToMono(googleInfo.class)
-                .block();
-    }
 
 
 }

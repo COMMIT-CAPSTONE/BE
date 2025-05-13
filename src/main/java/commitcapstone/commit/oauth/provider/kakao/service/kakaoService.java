@@ -1,9 +1,6 @@
 package commitcapstone.commit.oauth.provider.kakao.service;
 
 
-import commitcapstone.commit.oauth.OauthService;
-import commitcapstone.commit.oauth.provider.kakao.dto.kakaoInfo;
-import commitcapstone.commit.oauth.provider.kakao.dto.kakaoOauthAccessToken;
 import commitcapstone.commit.oauth.provider.kakao.dto.kakaoToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -16,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class kakaoService implements OauthService<kakaoToken, kakaoInfo> {
+public class kakaoService{
     @Value("${spring.oauth2.kakao.client-id}")
     private String clientId;
 
@@ -64,19 +61,5 @@ public class kakaoService implements OauthService<kakaoToken, kakaoInfo> {
                 .body(BodyInserters.fromFormData(formData))
                 .retrieve()
                 .bodyToMono(kakaoToken.class).block();
-    }
-
-    public kakaoInfo getUserInfo(String accessToken) {
-        String baseURL = "https://kapi.kakao.com/v2/user/me";
-        WebClient client = WebClient.builder()
-                .baseUrl(baseURL)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8")
-                .build();
-
-
-        return client.post()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .bodyToMono(kakaoInfo.class).block();
     }
 }

@@ -1,8 +1,6 @@
 package commitcapstone.commit.oauth.provider.naver.service;
 
 
-import commitcapstone.commit.oauth.OauthService;
-import commitcapstone.commit.oauth.provider.naver.dto.naverInfo;
 import commitcapstone.commit.oauth.provider.naver.dto.naverToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -15,7 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
-public class naverService implements OauthService<naverToken, naverInfo> {
+public class naverService{
     @Value("${spring.oauth2.naver.client-id}")
     private String clientId;
 
@@ -66,22 +64,6 @@ public class naverService implements OauthService<naverToken, naverInfo> {
                 .body(BodyInserters.fromFormData(formData))
                 .retrieve()
                 .bodyToMono(naverToken.class).block();
-    }
-
-
-
-    public naverInfo getUserInfo(String accessToken) {
-        String baseURL = "https://openapi.naver.com/v1/nid/me";
-
-        WebClient client = WebClient.builder()
-                .baseUrl(baseURL)
-                .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=UTF-8")
-                .build();
-
-        return client.post()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
-                .retrieve()
-                .bodyToMono(naverInfo.class).block();
     }
 
 }
