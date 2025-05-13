@@ -1,4 +1,4 @@
-package commitcapstone.commit.dto;
+package commitcapstone.commit.oauth.dto;
 
 public interface OauthUserInfo {
     String getId();     // 유저 고유 ID

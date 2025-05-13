@@ -1,4 +1,4 @@
-package commitcapstone.commit.dto;
+package commitcapstone.commit.oauth.dto;
 
 import lombok.Getter;
 

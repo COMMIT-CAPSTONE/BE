@@ -1,8 +1,8 @@
 package commitcapstone.commit.oauth.controller;
 
-import commitcapstone.commit.dto.OauthUserInfo;
-import commitcapstone.commit.dto.TokenRequest;
-import commitcapstone.commit.dto.OauthProvider;
+import commitcapstone.commit.oauth.dto.OauthUserInfo;
+import commitcapstone.commit.oauth.dto.TokenRequest;
+import commitcapstone.commit.oauth.dto.OauthProvider;
 import commitcapstone.commit.oauth.service.OauthService;
 import commitcapstone.commit.oauth.config.jwt.JwtTokenProvider;
 import commitcapstone.commit.oauth.provider.naver.controller.naverOauthController;

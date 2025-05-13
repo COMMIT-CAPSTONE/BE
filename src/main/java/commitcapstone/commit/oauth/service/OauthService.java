@@ -1,7 +1,7 @@
 package commitcapstone.commit.oauth.service;
 
-import commitcapstone.commit.dto.OauthProvider;
-import commitcapstone.commit.dto.OauthUserInfo;
+import commitcapstone.commit.oauth.dto.OauthProvider;
+import commitcapstone.commit.oauth.dto.OauthUserInfo;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
