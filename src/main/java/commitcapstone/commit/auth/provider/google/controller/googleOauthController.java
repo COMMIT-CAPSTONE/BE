@@ -47,6 +47,7 @@ public class googleOauthController {
             throw new IllegalStateException("Invalid google Oauth state");
         }
 
+        session.removeAttribute("state");
         // google에 토큰 요청
         googleToken token = oauthService.getToken(state, code);
 

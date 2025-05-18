@@ -67,7 +67,7 @@ public class OauthController {
 
     @PostMapping("logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
-        String refreshToken = request.getRefreshToken();
+        String refreshToken = request.getRefresh_token();
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body("logout/ Invalid Refresh Token");
         }
@@ -83,7 +83,7 @@ public class OauthController {
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
-        String refreshToken = request.getRefreshToken();
+        String refreshToken = request.getRefresh_token();
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body("refresh/ Invalid Refresh Token");
         }

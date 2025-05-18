@@ -68,6 +68,7 @@ public class JwtTokenProvider {
             Jwts.parser().setSigningKey(key).parseClaimsJws(token);
             return true;
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
