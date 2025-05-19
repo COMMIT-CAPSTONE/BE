@@ -21,8 +21,8 @@ public class UserService {
 
 
     public void setUserInfo(UserInfo userInfo, String email) {
-        String provider = redisService.get("provider: " + email);
-        String oauthId = redisService.get("oauthId: " + email);
+        String provider = redisService.get("provider:" + email);
+        String oauthId = redisService.get("oauthId:" + email);
         User user = new User();
         user.setOauthProvider(provider);
         user.setOauthId(oauthId);

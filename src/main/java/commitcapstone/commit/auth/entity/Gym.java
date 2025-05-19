@@ -7,7 +7,8 @@ import lombok.Setter;
 @Entity
 @Setter
 public class Gym {
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private String name;

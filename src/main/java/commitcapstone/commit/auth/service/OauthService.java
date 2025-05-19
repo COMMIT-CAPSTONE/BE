@@ -31,7 +31,7 @@ public class OauthService {
     }
 
     public boolean isUserCheck(String provider, String email) {
-        if (userRepository.existProviderAndEmail(provider,email)) {
+        if (userRepository.existsByOauthProviderAndEmail(provider,email)) {
             return true;
         } else {
             return false;

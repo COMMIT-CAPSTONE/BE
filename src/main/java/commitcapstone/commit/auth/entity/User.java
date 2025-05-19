@@ -7,9 +7,10 @@ import lombok.Setter;
 
 @Entity
 @Setter
+@Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "oauth_provider")
@@ -19,6 +20,7 @@ public class User {
     private String oauthId;
 
     private String email;
+
     private String nickname;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
