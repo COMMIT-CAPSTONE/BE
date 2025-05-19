@@ -1,12 +1,12 @@
-//package commitcapstone.commit.auth.repository;
-//
-//
-//import org.springframework.data.jpa.repository.JpaRepository;
-//import org.springframework.security.core.userdetails.User;
-//import org.springframework.stereotype.Repository;
-//
-//@Repository
-//public interface UserRepository extends JpaRepository<User, Long> {
-//    boolean existsByEmail(String email);
-//
-//}
+package commitcapstone.commit.auth.repository;
+
+
+import commitcapstone.commit.auth.entity.User;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface UserRepository extends JpaRepository<User, Long> {
+    boolean existProviderAndEmail(String provider, String email);
+
+}

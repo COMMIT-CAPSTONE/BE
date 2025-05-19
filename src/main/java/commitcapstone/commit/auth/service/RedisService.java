@@ -13,21 +13,21 @@ public class RedisService {
         this.redisTemplate = redisTemplate;
     }
 
-    public void saveRefreshToken(String email, String refreshToken, long expirationSeconds) {
-        redisTemplate.opsForValue().set(email, refreshToken, expirationSeconds, TimeUnit.SECONDS);
+    public void save(String key , String refreshToken, long expirationSeconds) {
+        redisTemplate.opsForValue().set(key, refreshToken, expirationSeconds, TimeUnit.SECONDS);
     }
 
-    public String getRefreshToken(String email) {
-        var value = redisTemplate.opsForValue().get(email);
+    public String get(String key) {
+        var value = redisTemplate.opsForValue().get(key);
         return value != null ? value.toString() : null;
     }
 
-    public void deleteRefreshToken(String email) {
-        redisTemplate.delete(email);
+    public void deleteRefreshToken(String key) {
+        redisTemplate.delete(key);
     }
 
-    public boolean hasRefreshToken(String email) {
-        return Boolean.TRUE.equals(redisTemplate.hasKey(email));
+    public boolean hasRefreshToken(String key) {
+        return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
 }

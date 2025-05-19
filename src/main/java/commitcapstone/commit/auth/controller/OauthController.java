@@ -37,9 +37,6 @@ public class OauthController {
         String provider = tokenRequest.getProvider();
         String oauthAccessToken = tokenRequest.getAccessToken();
 
-        LOGGER.info(String.valueOf(tokenRequest));
-        LOGGER.info("provider: " + provider);
-        LOGGER.info("accessToken: " + oauthAccessToken);
         if (provider == null) {
             throw new RuntimeException("소셜 로그인 제공자 null");
         }
@@ -60,36 +57,58 @@ public class OauthController {
         String accessToken = jwtTokenProvider.createAccessToken(userEmail);
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail);
 
-        redisService.saveRefreshToken(userEmail, refreshToken, 604800000);
+        String status = "";
+        if (oauthService.isUserCheck(provider , userEmail)) {
+            status = "not_fitst_login";
+        } else {
+            status = "fitst_login";
+        }
 
-        return ResponseEntity.ok(Map.of("token_type", "Bearer", "access_token" , accessToken, "refresh_token", refreshToken));
+        redisService.save("refreshToken:" + userEmail, refreshToken, 604800000);
+        redisService.save("provider:" + userEmail, provider, 1800000 ); // 30분 저장
+        redisService.save("oauthId:" + userEmail, userId, 1800000 ); // 30분 저장
+        return ResponseEntity.ok(Map.of("token_type", "Bearer", "access_token" , accessToken, "refresh_token", refreshToken, "status" , status));
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @PostMapping("logout")
     public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
-        String refreshToken = request.getRefresh_token();
+        String refreshToken = request.getRefreshToken();
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body("logout/ Invalid Refresh Token");
         }
         String email = jwtTokenProvider.getUserEmail(refreshToken);
-        String storedRefreshToken = redisService.getRefreshToken(email);
+        String storedRefreshToken = redisService.get("refreshToken:" + email);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             return ResponseEntity.status(401).body("Refresh Token not found or mismatched");
         }
 
-        redisService.deleteRefreshToken(email);
+        redisService.deleteRefreshToken("refreshToken:" + email);
         return ResponseEntity.status(200).body("success logout?");
     }
 
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
-        String refreshToken = request.getRefresh_token();
+        String refreshToken = request.getRefreshToken();
         if (!jwtTokenProvider.validateToken(refreshToken)) {
             return ResponseEntity.status(401).body("refresh/ Invalid Refresh Token");
         }
 
         String email = jwtTokenProvider.getUserEmail(refreshToken);
-        String storedRefreshToken = redisService.getRefreshToken(email);
+        String storedRefreshToken = redisService.get(email);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             return ResponseEntity.status(401).body("Refresh Token not found or mismatched");
         }
