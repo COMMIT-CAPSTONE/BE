@@ -30,7 +30,7 @@ public class ExerController {
         return ResponseEntity.ok("test");
     }
 
-    @GetMapping("/exer-time")
+    @GetMapping("/time")
     public ResponseEntity<?> ExerTime(@AuthenticationPrincipal String email) {
         long exerTime = exerService.getExerTime(email);
 
