@@ -108,7 +108,7 @@ public class OauthController {
         }
 
         String email = jwtTokenProvider.getUserEmail(refreshToken);
-        String storedRefreshToken = redisService.get(email);
+        String storedRefreshToken = redisService.get("refreshToken:"+email);
         if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
             return ResponseEntity.status(401).body("Refresh Token not found or mismatched");
         }
