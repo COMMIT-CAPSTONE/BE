@@ -4,6 +4,9 @@ package commitcapstone.commit.auth.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.time.LocalDateTime;
 
 
 @Entity
@@ -25,6 +28,12 @@ public class User {
 
     private String nickname;
 
+    @Column(name = "created_at", nullable = false, updatable = false)
+    @CreationTimestamp
+    private LocalDateTime createdAt;
+
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Gym gym;
+
+
 }
