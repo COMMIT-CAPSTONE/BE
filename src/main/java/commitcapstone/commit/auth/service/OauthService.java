@@ -57,7 +57,7 @@ public class OauthService {
         }
 
         if (oauthAccessToken.isEmpty()) {
-            throw new OauthException(OauthErrorCode.ISEMPTY_OAUTHACCESSTOKEN);
+            throw new OauthException(OauthErrorCode.IS_EMPTY_OAUTH_ACCESS_TOKEN);
         }
 
         OauthUserInfo userInfo = getUserInfo(
