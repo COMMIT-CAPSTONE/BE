@@ -7,6 +7,7 @@ import commitcapstone.commit.auth.dto.response.LoginResponse;
 import commitcapstone.commit.auth.service.OauthService;
 import commitcapstone.commit.auth.service.RedisService;
 import commitcapstone.commit.common.exception.OauthException;
+import commitcapstone.commit.common.response.SuccessResponse;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -28,21 +29,26 @@ public class OauthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(@RequestBody TokenRequest tokenRequest) {
-        return ResponseEntity.ok(oauthService.login(tokenRequest));
+    public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody TokenRequest tokenRequest) {
+        LoginResponse dto = oauthService.login(tokenRequest);
+
+        return ResponseEntity.ok(new SuccessResponse<>("로그인 성공" ,dto));
     }
 
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<SuccessResponse<?>> logout(@RequestBody RefreshTokenRequest request) {
         oauthService.logout(request);
-        return ResponseEntity.status(200).body("success logout");
+
+        return ResponseEntity.ok(new SuccessResponse<>("로그아웃 성공", null));
     }
 
     @PostMapping("/refresh")
-    public ResponseEntity<?> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
+    public ResponseEntity<SuccessResponse<AccessTokenResponse>> refreshAccessToken(@RequestBody RefreshTokenRequest request) {
         String accessToken = oauthService.refresh(request);
-        return ResponseEntity.ok(new AccessTokenResponse("Bearer", accessToken));
+        AccessTokenResponse dto = new AccessTokenResponse("Bearer", accessToken);
+
+        return ResponseEntity.ok(new SuccessResponse<>("토큰 재발급 성공", dto));
     }
 
 

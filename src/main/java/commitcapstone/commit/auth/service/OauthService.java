@@ -71,6 +71,8 @@ public class OauthService {
         String accessToken = jwtTokenProvider.createAccessToken(userEmail);
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail);
 
+
+        //
         String status;
         if (isUserCheck(provider , userEmail)) {
             status = "not_first_login";
