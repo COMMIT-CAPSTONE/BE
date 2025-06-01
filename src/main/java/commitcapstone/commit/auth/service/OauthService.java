@@ -10,6 +10,7 @@ import commitcapstone.commit.auth.repository.UserRepository;
 import commitcapstone.commit.common.code.OauthErrorCode;
 import commitcapstone.commit.common.exception.OauthException;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -112,7 +113,7 @@ public class OauthService {
         if (!storedRefreshToken.equals(refreshToken)) {
             throw new OauthException(OauthErrorCode.REFRESH_TOKEN_MISMATCH);
         }
-
+        SecurityContextHolder.clearContext();
         redisService.deleteRefreshToken(refreshTokenRedisKey);
     }
 
