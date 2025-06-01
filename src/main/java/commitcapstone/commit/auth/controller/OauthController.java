@@ -27,7 +27,6 @@ public class OauthController {
         this.redisService = redisService;
     }
 
-    @ExceptionHandler(OauthException.class)
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@RequestBody TokenRequest tokenRequest) {
         return ResponseEntity.ok(oauthService.login(tokenRequest));

@@ -1,7 +1,7 @@
 package commitcapstone.commit.common.response;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+
 
 @Getter
 public class ErrorResponse{
