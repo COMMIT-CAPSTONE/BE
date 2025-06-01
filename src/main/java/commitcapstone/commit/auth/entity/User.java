@@ -21,7 +21,7 @@ public class User {
 
     private String email;
 
-    private String nickname;
+    private String name;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Gym gym;

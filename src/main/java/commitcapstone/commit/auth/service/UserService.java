@@ -1,6 +1,6 @@
 package commitcapstone.commit.auth.service;
 
-import commitcapstone.commit.auth.dto.UserInfo;
+import commitcapstone.commit.auth.dto.request.UserInfoRequest;
 import commitcapstone.commit.auth.entity.Gym;
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.GymRepository;
@@ -20,7 +20,7 @@ public class UserService {
     }
 
 
-    public void setUserInfo(UserInfo userInfo, String email) {
+    public void setUserInfo(UserInfoRequest userInfo, String email) {
         String provider = redisService.get("provider:" + email);
         String oauthId = redisService.get("oauthId:" + email);
         User user = new User();
@@ -28,7 +28,7 @@ public class UserService {
         user.setOauthId(oauthId);
         user.setEmail(email);
 
-        user.setNickname(userInfo.getNickName());
+        user.setName(userInfo.getNickName());
 
         Gym gym = new Gym();
         gym.setName(userInfo.getGymName());
@@ -43,4 +43,11 @@ public class UserService {
 
         userRepository.save(user);
     }
+
+    public boolean isCheckNikName(String name) {
+
+        return userRepository.findByName(name).isEmpty();
+
+    }
+
 }
