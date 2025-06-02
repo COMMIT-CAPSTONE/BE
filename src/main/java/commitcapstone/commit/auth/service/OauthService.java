@@ -128,7 +128,8 @@ public class OauthService {
         }
 
         String email = jwtTokenProvider.getUserEmail(refreshToken);
-        String storedRefreshToken = redisService.get(email);
+        String refreshTokenRedisKey = "refreshToken:" + email;
+        String storedRefreshToken = redisService.get(refreshTokenRedisKey);
 
         if (storedRefreshToken == null) {
             throw new OauthException(OauthErrorCode.REFRESH_TOKEN_NOT_FOUND);
