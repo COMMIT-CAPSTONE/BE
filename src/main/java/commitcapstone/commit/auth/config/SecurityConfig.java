@@ -37,13 +37,8 @@ public class SecurityConfig {
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(200);
-                            response.getWriter().write("logout success");
-                        })
-                )
+                .logout(logout -> logout.disable())
+
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
 

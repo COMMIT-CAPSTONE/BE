@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CheckOutRequest {
+
     @JsonProperty("min")
     private long Min;
 
