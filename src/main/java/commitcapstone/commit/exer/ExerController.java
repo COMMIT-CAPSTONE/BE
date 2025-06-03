@@ -29,14 +29,14 @@ public class ExerController {
 //    }
 //
     @GetMapping("time/total")
-    public ResponseEntity<SuccessResponse<UserTimeResponse>> ExerTime(@AuthenticationPrincipal String email) {
-        UserTimeResponse exerService.getExerTime(email, "TOTAL");
+    public ResponseEntity<SuccessResponse<UserTimeResponse>> getTotalTime(@AuthenticationPrincipal String email) {
+        UserTimeResponse response = exerService.getExerTime(email, "TOTAL");
         return ResponseEntity.ok(new SuccessResponse<>("전체 시간 호출 성공", response));
     }
 
     @GetMapping("/time/today")
-    public ResponseEntity<SuccessResponse<UserTimeResponse>> ExerTime(@AuthenticationPrincipal String email) {
-        UserTimeResponse exerService.getExerTime(email, "TODAY");
+    public ResponseEntity<SuccessResponse<UserTimeResponse>> getTodayTime(@AuthenticationPrincipal String email) {
+        UserTimeResponse response = exerService.getExerTime(email, "TODAY");
         return ResponseEntity.ok(new SuccessResponse<>("전체 시간 호출 성공", response));
     }
 //
