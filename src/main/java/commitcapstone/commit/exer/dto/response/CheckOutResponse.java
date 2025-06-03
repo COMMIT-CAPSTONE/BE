@@ -1,8 +1,12 @@
 package commitcapstone.commit.exer.dto.response;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 @AllArgsConstructor
+@Setter
+@Getter
 public class CheckOutResponse {
     private int min; //추가되는 분
     private int todayTotalTime; //오늘 기록된 분

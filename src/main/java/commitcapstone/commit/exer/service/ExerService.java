@@ -14,6 +14,7 @@ import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.Work;
 import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ import static java.time.temporal.ChronoUnit.DAYS;
 
 
 @Service
+@Slf4j
 public class ExerService {
     private final UserRepository userRepository;
     private final WorkRepository workRepository;
@@ -61,9 +63,11 @@ public class ExerService {
         workRepository.save(work);
         pointRepository.save(point);
 
+        log.info("addPoint : " + addPoint);
         int todayTotalTime = workRepository.getTodayDuration(user.getId(), today);
         int totalTime = workRepository.getTotalDuration(user.getId());
         int totalPoint = pointRepository.findTotalPointByUserId(user.getId());
+
 
         return new CheckOutResponse(min, todayTotalTime, totalTime, addPoint, totalPoint);
     }

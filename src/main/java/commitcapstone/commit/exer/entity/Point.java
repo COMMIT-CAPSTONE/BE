@@ -4,6 +4,7 @@ import commitcapstone.commit.auth.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+
 @Table(name = "point")
 public class Point {
 
@@ -26,7 +28,7 @@ public class Point {
     private int point;
 
     @Column
-    private String type;//
+    private String type;
 
     @CreationTimestamp
     @Column(name = "earned_at", nullable = false, updatable = false)

@@ -14,8 +14,9 @@ public class PointService {
             return 70;
         } else if (min <= 240) {
             return 100;
+        } else {
+            return 200;
         }
-        return 0;
     }
 
 }
