@@ -32,7 +32,8 @@ public class SecurityConfig {
                                         "/redirect",
                                         "/login",
                                         "/exchange",
-                                        "/oauth/**"
+                                        "/oauth/**",
+                                        "/refresh"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
