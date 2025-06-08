@@ -1,9 +1,9 @@
-package commitcapstone.commit.auth.dto;
+package commitcapstone.commit.auth.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 @Data
-public class UserInfo {
+public class UserInfoRequest {
 
     @JsonProperty("oauth_provider")
     private String oauthProvider;

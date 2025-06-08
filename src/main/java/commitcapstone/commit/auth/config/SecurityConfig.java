@@ -32,17 +32,13 @@ public class SecurityConfig {
                                         "/redirect",
                                         "/login",
                                         "/exchange",
-                                        "/oauth/**"
+                                        "/oauth/**",
+                                        "/refresh"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )
-                .logout(logout -> logout
-                        .logoutUrl("/logout")
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(200);
-                            response.getWriter().write("logout success");
-                        })
-                )
+                .logout(logout -> logout.disable())
+
                 .addFilterBefore(new JwtAuthFilter(jwtTokenProvider),
                         UsernamePasswordAuthenticationFilter.class);
 

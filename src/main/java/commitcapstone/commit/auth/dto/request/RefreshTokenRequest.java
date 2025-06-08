@@ -1,4 +1,4 @@
-package commitcapstone.commit.auth.dto;
+package commitcapstone.commit.auth.dto.request;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
