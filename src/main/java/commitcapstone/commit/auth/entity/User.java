@@ -38,7 +38,7 @@ public class User {
     private Integer point;
 
     @Column(length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'bronze'")
-    private String tier;
+    private String tier ;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
