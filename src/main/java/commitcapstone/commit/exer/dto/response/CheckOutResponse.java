@@ -8,7 +8,7 @@ import lombok.Setter;
 @Setter
 @Getter
 public class CheckOutResponse {
-    private int min; //추가되는 분
+    private long min; //추가되는 분
     private int todayTotalTime; //오늘 기록된 분
     private int totalTime; // 총 전체 분
 
