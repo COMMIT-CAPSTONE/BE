@@ -45,5 +45,5 @@ public class User {
     private LocalDateTime createdAt;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Gym gym ;
+    private Gym gym;
 }
