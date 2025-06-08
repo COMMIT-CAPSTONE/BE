@@ -9,6 +9,7 @@ import commitcapstone.commit.auth.service.RedisService;
 import commitcapstone.commit.common.exception.OauthException;
 import commitcapstone.commit.common.response.SuccessResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,15 +17,12 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequestMapping("/oauth")
+@RequiredArgsConstructor
 public class OauthController {
 
     private final OauthService oauthService;
     private final RedisService redisService;
 
-    public OauthController(OauthService oauthService, RedisService redisService) {
-        this.oauthService = oauthService;
-        this.redisService = redisService;
-    }
 
     @PostMapping("/login")
     public ResponseEntity<SuccessResponse<LoginResponse>> login(@RequestBody TokenRequest tokenRequest) {
