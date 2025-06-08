@@ -47,7 +47,7 @@ public class ExerService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
 
-        int min = request.getMin();
+        long min = request.getMin();
         LocalDate today = LocalDate.now();
         int addPoint = pointService.PointCalculate(min);
         Work work = new Work();
