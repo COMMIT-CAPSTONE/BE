@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/exer")
 @RequiredArgsConstructor
+
 public class ExerController {
 
     private final ExerService exerService;
@@ -25,7 +26,7 @@ public class ExerController {
 
         CheckOutResponse response = exerService.saveTimeAndPoint(email, request);
 
-        return ResponseEntity.ok(new SuccessResponse<>("체크아웃 성공", response));
+        return ResponseEntity.ok(new SuccessResponse<>("체크아웃 성공", response ));
     }
 
     @GetMapping("time/total")
