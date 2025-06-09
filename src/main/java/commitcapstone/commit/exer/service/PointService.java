@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class PointService {
 
+
     public int PointCalculate(long min) {
         if (min >= 10&&min <= 30) {
             return 10;
