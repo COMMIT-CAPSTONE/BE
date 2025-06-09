@@ -35,7 +35,6 @@ public class ExerService {
     @Value("${config.start_date}")
     private String startDate;
 
-
     public ExerService(UserRepository userRepository, WorkRepository workRepository, PointService pointService, PointRepository pointRepository) {
         this.userRepository = userRepository;
         this.workRepository = workRepository;
