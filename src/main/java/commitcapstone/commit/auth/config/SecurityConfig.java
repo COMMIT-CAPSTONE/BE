@@ -30,20 +30,20 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                        "/redirect",
-                                        "/login",
-                                        "/exchange",
+                                "/redirect",
+                                "/login",
+                                "/exchange",
                                 "/oauth/**",
-                                        "/api/oauth/**",
-                                        "/refresh",
+                                "/api/oauth/**",
+                                "/refresh",
                                 "/v3/api-docs/**",
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
-                                        "/api/auth/**",
-                                        "/refresh"
-                                ).permitAll()
+                                "/api/auth/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
+
                 .logout(AbstractHttpConfigurer::disable)
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
