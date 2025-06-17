@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Controller
-@RequestMapping("/oauth/google")
+@RequestMapping("api/oauth/google")
 public class googleOauthController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(googleOauthController.class);
     private final googleService oauthService;

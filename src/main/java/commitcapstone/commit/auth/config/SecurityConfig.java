@@ -32,6 +32,7 @@ public class SecurityConfig {
                                         "/redirect",
                                         "/login",
                                         "/exchange",
+                                        "/api/oauth/**",
                                         "/oauth/**",
                                         "/refresh"
                                 ).permitAll()
