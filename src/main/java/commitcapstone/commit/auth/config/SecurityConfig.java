@@ -32,6 +32,7 @@ public class SecurityConfig {
                                         "/redirect",
                                         "/login",
                                         "/exchange",
+                                "/oauth/**",
                                         "/api/oauth/**",
                                         "/api/auth/**",
                                         "/refresh"
