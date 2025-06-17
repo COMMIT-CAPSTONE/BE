@@ -31,7 +31,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         String path = request.getRequestURI();
 
         // 인증 제외 경로
-        if (path.startsWith("/api/auth") || path.startsWith("/api/oauth")) {
+        if (path.startsWith("/api/auth") || path.startsWith("/api/oauth") || path.startsWith("/oauth")) {
             filterChain.doFilter(request, response);
             return;
         }
