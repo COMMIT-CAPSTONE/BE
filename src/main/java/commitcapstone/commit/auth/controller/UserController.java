@@ -5,13 +5,13 @@ import commitcapstone.commit.auth.dto.request.UserInfoRequest;
 import commitcapstone.commit.auth.service.UserService;
 import commitcapstone.commit.common.response.SuccessResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
     private final UserService userService;
-
     public UserController(UserService userService) {
         this.userService = userService;
     }
