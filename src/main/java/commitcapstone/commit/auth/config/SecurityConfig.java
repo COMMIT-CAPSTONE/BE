@@ -34,7 +34,10 @@ public class SecurityConfig {
                                         "/exchange",
                                         "/api/oauth/**",
                                         "/oauth/**",
-                                        "/refresh"
+                                        "/refresh",
+                                "/v3/api-docs/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html"
                                 ).permitAll()
                         .anyRequest().authenticated()
                 )

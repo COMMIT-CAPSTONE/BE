@@ -10,6 +10,7 @@ import lombok.Getter;
 @Builder
 @AllArgsConstructor
 public class GetChallengesResponse {
+    private long challengeId;
     private String challengeTitle;
     private String challengeDescription;
     private ChallengeType challengeType;
@@ -17,6 +18,7 @@ public class GetChallengesResponse {
 
     public static GetChallengesResponse from(Challenge challenge) {
         return GetChallengesResponse.builder()
+                .challengeId(challenge.getId())
                 .challengeTitle(challenge.getTitle())
                 .challengeDescription(challenge.getDescription())
                 .challengeType(challenge.getType())
