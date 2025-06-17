@@ -33,7 +33,7 @@ public class SecurityConfig {
                                         "/login",
                                         "/exchange",
                                         "/api/oauth/**",
-                                        "/oauth/*",
+                                        "/api/aauth/*",
                                         "/refresh"
                                 ).permitAll()
                         .anyRequest().authenticated()

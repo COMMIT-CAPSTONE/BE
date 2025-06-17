@@ -6,9 +6,7 @@ import commitcapstone.commit.auth.dto.oauth.TokenRequest;
 import commitcapstone.commit.auth.dto.response.LoginResponse;
 import commitcapstone.commit.auth.service.OauthService;
 import commitcapstone.commit.auth.service.RedisService;
-import commitcapstone.commit.common.exception.OauthException;
 import commitcapstone.commit.common.response.SuccessResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/oauth")
+@RequestMapping("/api/auth")
 @RequiredArgsConstructor
-public class OauthController {
+public class AuthController {
 
     private final OauthService oauthService;
     private final RedisService redisService;
