@@ -16,7 +16,7 @@ import java.util.UUID;
 
 @Controller
 @RequestMapping("api/oauth/google")
-public class googleOauthController {
+public class  googleOauthController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(googleOauthController.class);
     private final googleService oauthService;
     private final JwtTokenProvider jwtTokenProvider;
