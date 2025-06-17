@@ -27,6 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
+
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getServletPath();
         return path.startsWith("/swagger-ui") || path.startsWith("/v3/api-docs") || path.startsWith("/swagger-resources");
@@ -35,27 +36,42 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
 
+
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        String path = request.getRequestURI();
+
+        // 인증 제외 경로
+        if (path.startsWith("/api/auth") || path.startsWith("/api/oauth") || path.startsWith("/oauth") || path.equals("/oauth/google/login")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         logger.info("JwtAuthFilter start");
         String header = request.getHeader("Authorization");
 
-        if (header != null && header.startsWith("Bearer")) {
-            String token = header.replace("Bearer ", "");
-            try {
+        if (header != null && header.startsWith("Bearer ")) {
+            String token = header.substring(7);
 
+            try {
                 String email = jwtTokenProvider.getUserEmail(token);
 
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(email, null, List.of(new SimpleGrantedAuthority("ROLE_USER")));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+
             } catch (Exception e) {
-                logger.error(e.getMessage());
-
+                logger.error("JWT 검증 실패: " + e.getMessage());
+                response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid JWT token");
+                return;
             }
+        } else {
 
-
-
+            logger.warn("Authorization 헤더 없음 또는 잘못된 형식");
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Authorization header missing or malformed");
+            return;
         }
+
         filterChain.doFilter(request, response);
     }
+
 }

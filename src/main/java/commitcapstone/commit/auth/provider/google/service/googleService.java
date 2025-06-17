@@ -1,5 +1,5 @@
 package commitcapstone.commit.auth.provider.google.service;
-import commitcapstone.commit.auth.controller.OauthController;
+import commitcapstone.commit.auth.controller.AuthController;
 import commitcapstone.commit.auth.provider.google.dto.googleToken;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +14,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 public class googleService {
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(OauthController.class);
+    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(AuthController.class);
 
     @Value("${spring.oauth2.google.client-id}")
     private String clientId;
