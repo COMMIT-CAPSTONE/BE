@@ -2,8 +2,7 @@ package commitcapstone.commit.exer.entity;
 
 import commitcapstone.commit.auth.entity.User;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -11,6 +10,9 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //* 중요
+@AllArgsConstructor //* 중요
+@Builder
 @Table(name = "point")
 public class Point {
     @Id
@@ -25,7 +27,7 @@ public class Point {
     private Integer point;
 
     @Column(length = 255)
-    private String type;
+    private PointType type;
 
     @Column(name = "earned_at", nullable = false, updatable = false)
     @CreationTimestamp

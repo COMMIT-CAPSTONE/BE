@@ -9,7 +9,7 @@ import java.time.LocalDate;
 
 @Getter
 @Setter
-public class PostChallengeRequest {
+public class ChallengeCreateRequest {
 
     @NotNull(message = "챌린지 제목은 필수입니다.")
     private String challengeTitle;
