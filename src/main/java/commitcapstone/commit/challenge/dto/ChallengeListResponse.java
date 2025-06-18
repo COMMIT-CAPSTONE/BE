@@ -12,7 +12,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class ChallengeListResponse {
-    private long challengeId;
+    private Long challengeId;
     private String challengeTitle;
     private String challengeDescription;
     private ChallengeType challengeType;
@@ -20,7 +20,7 @@ public class ChallengeListResponse {
     private int targetMinutes;
     private LocalDate startDate;
     private LocalDate endDate;
-    private boolean isFinished = false;
+    private boolean isFinished;
 
     public static ChallengeListResponse from(Challenge challenge) {
         return ChallengeListResponse.builder()
