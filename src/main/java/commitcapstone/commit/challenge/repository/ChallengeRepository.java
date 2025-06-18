@@ -13,7 +13,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
-    boolean existsByOwner(User owner);
+    boolean existsByOwnerAndIsFinishedFalse(User owner);
 
     //타입만 선택
     Page<Challenge> findByType(Pageable pageable, ChallengeType type);

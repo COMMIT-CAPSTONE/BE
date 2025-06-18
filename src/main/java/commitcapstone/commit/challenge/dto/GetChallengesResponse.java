@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDate;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -15,6 +17,10 @@ public class GetChallengesResponse {
     private String challengeDescription;
     private ChallengeType challengeType;
     private int challengeBetPoint;
+    private int targetMinutes;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private boolean isFinished = false;
 
     public static GetChallengesResponse from(Challenge challenge) {
         return GetChallengesResponse.builder()
@@ -23,6 +29,11 @@ public class GetChallengesResponse {
                 .challengeDescription(challenge.getDescription())
                 .challengeType(challenge.getType())
                 .challengeBetPoint(challenge.getBetPoint())
+                .targetMinutes(challenge.getTargetMinutes())
+                .startDate(challenge.getStartDate())
+                .endDate(challenge.getEndDate())
+                .isFinished(challenge.isFinished())
                 .build();
     }
+
 }
