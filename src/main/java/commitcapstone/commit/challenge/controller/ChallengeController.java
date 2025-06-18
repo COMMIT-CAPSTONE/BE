@@ -42,7 +42,12 @@ public class ChallengeController {
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 조회 성공", response));
     }
 
+    @GetMapping("/challenges/{id}")
+    public ResponseEntity<SuccessResponse<ChallengeDetailResponse>> getChallengeDetail(@PathVariable Long id) {
+        ChallengeDetailResponse response = challengeService.getChallengeDetail(id);
 
+        return ResponseEntity.ok(new SuccessResponse<>("챌린지 상세 정보 조회 성공", response));
+    }
 
 
 }

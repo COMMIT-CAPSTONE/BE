@@ -2,6 +2,7 @@ package commitcapstone.commit.challenge.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.challenge.dto.ChallengeDetailResponse;
 import commitcapstone.commit.challenge.dto.ChallengeListResponse;
 import commitcapstone.commit.challenge.dto.ChallengeCreateRequest;
 import commitcapstone.commit.challenge.dto.ChallengeCreateResponse;
@@ -148,6 +149,16 @@ public class ChallengeService {
                         .map(ChallengeListResponse::from);
             }
         }
+    }
+
+    public ChallengeDetailResponse getChallengeDetail(Long id) {
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
+
+        User user = userRepository.findById(challenge.getOwner().getId())
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지의 유저가 존재하지 않습니다."));
+
+        return ChallengeDetailResponse.from(challenge, user);
     }
 
 
