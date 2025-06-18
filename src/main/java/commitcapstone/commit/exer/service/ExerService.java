@@ -11,6 +11,7 @@ import commitcapstone.commit.exer.dto.response.ExerTimeResponse;
 import commitcapstone.commit.exer.dto.response.UserExerTimeResponse;
 import commitcapstone.commit.exer.dto.response.UserExerTimeStatResponse;
 import commitcapstone.commit.exer.entity.Point;
+import commitcapstone.commit.exer.entity.PointType;
 import commitcapstone.commit.exer.entity.Work;
 import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
@@ -56,10 +57,11 @@ public class ExerService {
         work.setDuration(min);
         work.setWorkDate(today);
 
-        Point point = new Point();
-        point.setUser(user);
-        point.setPoint(addPoint);
-        point.setType("EXER");
+        Point point = Point.builder()
+                .user(user)
+                .point(addPoint)
+                .type(PointType.EXER_ADD)
+                .build();
 
         workRepository.save(work);
         pointRepository.save(point);
