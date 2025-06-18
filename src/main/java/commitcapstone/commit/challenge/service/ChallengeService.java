@@ -2,9 +2,9 @@ package commitcapstone.commit.challenge.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.dto.GetChallengesResponse;
-import commitcapstone.commit.challenge.dto.PostChallengeRequest;
-import commitcapstone.commit.challenge.dto.PostChallengeResponse;
+import commitcapstone.commit.challenge.dto.ChallengeListResponse;
+import commitcapstone.commit.challenge.dto.ChallengeCreateRequest;
+import commitcapstone.commit.challenge.dto.ChallengeCreateResponse;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeSortType;
 import commitcapstone.commit.challenge.entity.ChallengeType;
@@ -22,7 +22,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -42,7 +41,7 @@ public class ChallengeService {
     }
 
     @Transactional
-    public PostChallengeResponse saveChallenge(String email, PostChallengeRequest request) {
+    public ChallengeCreateResponse saveChallenge(String email, ChallengeCreateRequest request) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
 
@@ -88,9 +87,6 @@ public class ChallengeService {
         }
 
 
-
-
-
         LocalDateTime now = LocalDateTime.now();
         Challenge challenge = Challenge.builder()
                 .owner(user)
@@ -118,7 +114,7 @@ public class ChallengeService {
 
 
 
-        return PostChallengeResponse.builder()
+        return ChallengeCreateResponse.builder()
                 .challengeTitle(challenge.getTitle())
                 .challengeDescription(challenge.getDescription())
                 .challengeType(challenge.getType())
@@ -129,7 +125,7 @@ public class ChallengeService {
                 .build();
     }
 
-    public Page<GetChallengesResponse> getChallenges(ChallengeType type, String keyword, int page, int size, ChallengeSortType sortType) {
+    public Page<ChallengeListResponse> getChallenges(ChallengeType type, String keyword, int page, int size, ChallengeSortType sortType) {
 
         Sort sort = utils.getSort(sortType);
         Pageable pageable = PageRequest.of(page, size, sort);
@@ -138,24 +134,23 @@ public class ChallengeService {
         if (keyword == null || keyword.trim().isEmpty()) {
             if (type.equals(ChallengeType.ALL)) {
                 return challengeRepository.findAll(pageable)
-                        .map(GetChallengesResponse::from);
+                        .map(ChallengeListResponse::from);
             } else {
                 return challengeRepository.findByType(pageable, type)
-                        .map(GetChallengesResponse::from);
+                        .map(ChallengeListResponse::from);
             }
         } else {
             if (type.equals(ChallengeType.ALL)) {
                 return challengeRepository.findByTitle(keyword, pageable)
-                        .map(GetChallengesResponse::from);
+                        .map(ChallengeListResponse::from);
             } else {
                 return challengeRepository.findByTypeAndTitle(type, keyword, pageable)
-                        .map(GetChallengesResponse::from);
+                        .map(ChallengeListResponse::from);
             }
         }
-
-
-
     }
+
+
 
 
 

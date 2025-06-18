@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @AllArgsConstructor
-public class GetChallengesResponse {
+public class ChallengeListResponse {
     private long challengeId;
     private String challengeTitle;
     private String challengeDescription;
@@ -22,8 +22,8 @@ public class GetChallengesResponse {
     private LocalDate endDate;
     private boolean isFinished = false;
 
-    public static GetChallengesResponse from(Challenge challenge) {
-        return GetChallengesResponse.builder()
+    public static ChallengeListResponse from(Challenge challenge) {
+        return ChallengeListResponse.builder()
                 .challengeId(challenge.getId())
                 .challengeTitle(challenge.getTitle())
                 .challengeDescription(challenge.getDescription())

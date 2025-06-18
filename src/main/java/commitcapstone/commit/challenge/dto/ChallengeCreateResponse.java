@@ -10,7 +10,7 @@ import java.time.LocalDate;
 @Getter
 @Builder
 @AllArgsConstructor
-public class PostChallengeResponse {
+public class ChallengeCreateResponse {
     private String challengeTitle;
     private String challengeDescription;
     private ChallengeType challengeType;
