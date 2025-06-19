@@ -49,6 +49,6 @@ public class ChallengeController {
     @PostMapping("/challenges/{id}/join")
     public ResponseEntity<SuccessResponse<ChallengeJoinResponse>> joinChallenge(@PathVariable Long id, @AuthenticationPrincipal String email) {
         ChallengeJoinResponse response = challengeService.joinChallenge(id, email);
-        return ResponseEntity.ok(new SuccessResponse<>("챌린지 참여 성공", response))
+        return ResponseEntity.ok(new SuccessResponse<>("챌린지 참여 성공", response));
     }
 }
