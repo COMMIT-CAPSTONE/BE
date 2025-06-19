@@ -1,14 +1,17 @@
 package commitcapstone.commit.exer.entity;
 
 import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.challenge.entity.Challenge;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED) //* 중요
+@AllArgsConstructor //* 중요
+@Builder
 @Setter
 public class Work {
     @Id
@@ -21,7 +24,11 @@ public class Work {
     @Column(name = "work_date", nullable = false)
     private LocalDate workDate;
 
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "challenge_id")
+    private Challenge challenge;
+
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 }

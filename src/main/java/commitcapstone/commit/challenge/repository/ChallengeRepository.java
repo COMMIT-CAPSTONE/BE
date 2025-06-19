@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Repository
 public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
-    boolean existsByOwnerAndIsFinishedFalse(User owner);
+//    boolean existsByOwnerAndIsFinishedFalse(User owner);
 
     Optional<Challenge> findById(Long id);
 

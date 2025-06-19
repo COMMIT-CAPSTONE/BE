@@ -1,9 +1,6 @@
 package commitcapstone.commit.challenge.controller;
 
-import commitcapstone.commit.challenge.dto.ChallengeDetailResponse;
-import commitcapstone.commit.challenge.dto.ChallengeListResponse;
-import commitcapstone.commit.challenge.dto.ChallengeCreateRequest;
-import commitcapstone.commit.challenge.dto.ChallengeCreateResponse;
+import commitcapstone.commit.challenge.dto.*;
 import commitcapstone.commit.challenge.entity.ChallengeSortType;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.challenge.service.ChallengeService;
@@ -49,5 +46,9 @@ public class ChallengeController {
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 상세 정보 조회 성공", response));
     }
 
-
+    @PostMapping("/challenges/{id}/join")
+    public ResponseEntity<SuccessResponse<ChallengeJoinResponse>> joinChallenge(@PathVariable Long id, @AuthenticationPrincipal String email) {
+        ChallengeJoinResponse response = challengeService.joinChallenge(id, email);
+        return ResponseEntity.ok(new SuccessResponse<>("챌린지 참여 성공", response))
+    }
 }

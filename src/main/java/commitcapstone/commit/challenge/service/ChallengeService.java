@@ -2,13 +2,12 @@ package commitcapstone.commit.challenge.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.dto.ChallengeDetailResponse;
-import commitcapstone.commit.challenge.dto.ChallengeListResponse;
-import commitcapstone.commit.challenge.dto.ChallengeCreateRequest;
-import commitcapstone.commit.challenge.dto.ChallengeCreateResponse;
+import commitcapstone.commit.challenge.dto.*;
 import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.challenge.entity.ChallengeParticipant;
 import commitcapstone.commit.challenge.entity.ChallengeSortType;
 import commitcapstone.commit.challenge.entity.ChallengeType;
+import commitcapstone.commit.challenge.repository.ChallengeParticipantRepository;
 import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.challenge.utils.Utils;
 import commitcapstone.commit.common.code.ChallengeErrorCode;
@@ -23,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -31,13 +31,15 @@ public class ChallengeService {
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
     private final PointRepository pointRepository;
+    private final ChallengeParticipantRepository challengeParticipantRepository;
     private final Utils utils;
 
 
-    public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, Utils utils) {
+    public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, ChallengeParticipantRepository challengeParticipantRepository, Utils utils) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.pointRepository = pointRepository;
+        this.challengeParticipantRepository = challengeParticipantRepository;
         this.utils = utils;
     }
 
@@ -74,7 +76,7 @@ public class ChallengeService {
         //이미 사용자가 참여중인 챌린지가 있는지 확인
         /*todo: challengeRepository.existsByOwner(user)가 단순히 존재 여부가 아니라 현재 진행 중인 챌린지만 체크하는지 확인 필요 - 완료
         */
-        if (challengeRepository.existsByOwnerAndIsFinishedFalse(user)) {
+        if (challengeParticipantRepository.existsByUserAndIsFinishedFalse(user)) {
             throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
         }
 
@@ -112,6 +114,19 @@ public class ChallengeService {
                 .earnedAt(now)
                 .build();
         pointRepository.save(point);
+
+        ChallengeParticipant challengeParticipant = ChallengeParticipant.builder()
+                .user(user)
+                .challenge(challenge)
+                .isFinished(false)
+                .build();
+
+        challengeParticipantRepository.save(challengeParticipant);
+
+
+
+
+
 
 
 
@@ -161,7 +176,44 @@ public class ChallengeService {
         return ChallengeDetailResponse.from(challenge, user);
     }
 
+    public ChallengeJoinResponse joinChallenge(long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + email));
 
+
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
+
+        if (challengeParticipantRepository.existsByUserAndIsFinishedFalse(user)) {
+            throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
+        }
+
+
+        LocalDate today = LocalDate.now();
+        if (!today.isBefore(challenge.getStartDate())) {
+            throw new ChallengeException(ChallengeErrorCode.ALREAY_START_CHALLENGE);
+        }
+
+        ChallengeParticipant participant = ChallengeParticipant.builder()
+                .user(user)
+                .challenge(challenge)
+                .isFinished(false)
+                .build();
+
+        challengeParticipantRepository.save(participant);
+
+        LocalDateTime now = LocalDateTime.now();
+        Point point = Point.builder()
+                .user(user)
+                .point(challenge.getBetPoint())
+                .type(PointType.CHALLENGE_MINUS)
+                .earnedAt(now)
+                .build();
+        pointRepository.save(point);
+
+
+        return ChallengeJoinResponse.builder().id(challenge.getId()).build();
+    }
 
 
 

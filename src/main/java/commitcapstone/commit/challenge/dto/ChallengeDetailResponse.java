@@ -23,6 +23,10 @@ public class ChallengeDetailResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean isFinished;
+    
+    //추가적인 정보
+    private int participant;// 참가한 사용자 수
+    private int totalBetPoint;//총 모인 포인트
 
     //사용자 정보
     private String userName;
