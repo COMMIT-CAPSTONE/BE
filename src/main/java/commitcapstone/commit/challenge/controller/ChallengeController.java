@@ -40,8 +40,8 @@ public class ChallengeController {
     }
 
     @GetMapping("/challenges/{id}")
-    public ResponseEntity<SuccessResponse<ChallengeDetailResponse>> getChallengeDetail(@PathVariable Long id) {
-        ChallengeDetailResponse response = challengeService.getChallengeDetail(id);
+    public ResponseEntity<SuccessResponse<ChallengeDetailResponse>> getChallengeDetail(@PathVariable Long id, @AuthenticationPrincipal String email) {
+        ChallengeDetailResponse response = challengeService.getChallengeDetail(id, email);
 
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 상세 정보 조회 성공", response));
     }
@@ -51,4 +51,6 @@ public class ChallengeController {
         ChallengeJoinResponse response = challengeService.joinChallenge(id, email);
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 참여 성공", response));
     }
+
+
 }
