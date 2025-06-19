@@ -1,5 +1,6 @@
 package commitcapstone.commit.exer.repository;
 
+import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.exer.entity.Work;
 
 
@@ -14,6 +15,8 @@ import java.util.List;
 
 @Repository
 public interface WorkRepository extends JpaRepository<Work, Long> {
+    @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :date")
+    int getTotalDurationByUserAndDate(@Param("user") User user, @Param("date") LocalDate date);
 
     /*
      * 일일 운동 시간을 구하는 쿼리

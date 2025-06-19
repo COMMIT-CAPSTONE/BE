@@ -6,10 +6,14 @@ import commitcapstone.commit.challenge.entity.ChallengeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
+@Setter
 @Builder
 @AllArgsConstructor
 public class ChallengeDetailResponse {
@@ -23,16 +27,18 @@ public class ChallengeDetailResponse {
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean isFinished;
-    
-    //추가적인 정보
-    private int participant;// 참가한 사용자 수
+
+
+    private int participants;// 참가한 사용자 수
     private int totalBetPoint;//총 모인 포인트
+
+    private List<ChallengeMyProgress> myProgressList;
 
     //사용자 정보
     private String userName;
     private String tier;
 
-    public static ChallengeDetailResponse from(Challenge challenge, User user) {
+    public static ChallengeDetailResponse from(Challenge challenge, User user, int participants) {
         return ChallengeDetailResponse.builder()
                 .challengeId(challenge.getId())
                 .challengeTitle(challenge.getTitle())
@@ -44,8 +50,13 @@ public class ChallengeDetailResponse {
                 .endDate(challenge.getEndDate())
                 .isFinished(challenge.isFinished())
 
+                .participants(participants)
+                .totalBetPoint(challenge.getBetPoint() * participants)
+
                 .userName(user.getName())
                 .tier(user.getTier())
                 .build();
     }
+
+
 }
