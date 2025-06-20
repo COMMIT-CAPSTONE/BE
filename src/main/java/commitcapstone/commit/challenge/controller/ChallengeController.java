@@ -21,7 +21,7 @@ public class ChallengeController {
 
     //챌린지 생성
     @PostMapping("/challenges")
-    public ResponseEntity<SuccessResponse<ChallengeCreateResponse>> postChallenge(@AuthenticationPrincipal String email, @Valid @RequestBody ChallengeCreateRequest request) {
+    public ResponseEntity<SuccessResponse<ChallengeCreateResponse>> postChallenge(@AuthenticationPrincipal String email, @RequestBody ChallengeCreateRequest request) {
         ChallengeCreateResponse response = challengeService.saveChallenge(email, request);
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 생성 성공", response));
     }
