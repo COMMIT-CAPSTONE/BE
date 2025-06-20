@@ -2,6 +2,8 @@ package commitcapstone.commit.exer.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.common.code.ExerErrorCode;
 import commitcapstone.commit.common.exception.ExerException;
 
@@ -32,16 +34,18 @@ public class ExerService {
     private final WorkRepository workRepository;
     private final PointService pointService;
     private final PointRepository pointRepository;
+    private final ChallengeRepository challengeRepository;
 
     @Value("${config.start_date}")
     private String startDate;
 
 
-    public ExerService(UserRepository userRepository, WorkRepository workRepository, PointService pointService, PointRepository pointRepository) {
+    public ExerService(UserRepository userRepository, WorkRepository workRepository, PointService pointService, PointRepository pointRepository, ChallengeRepository challengeRepository) {
         this.userRepository = userRepository;
         this.workRepository = workRepository;
         this.pointService = pointService;
         this.pointRepository = pointRepository;
+        this.challengeRepository = challengeRepository;
     }
 
     @Transactional
@@ -52,10 +56,16 @@ public class ExerService {
         long min = request.getMin();
         LocalDate today = LocalDate.now();
         int addPoint = pointService.PointCalculate(min);
-        Work work = new Work();
-        work.setUser(user);
-        work.setDuration(min);
-        work.setWorkDate(today);
+
+        Work work = Work.builder()
+                .user(user)
+                .duration(min)
+                .workDate(today).build();
+
+//        if(!challengeRepository.existsByOwnerAndIsFinishedFalse(user)) {
+//            work.builder().challenge();
+//        } 보니까 이거는 오너인 경우에만 찾는거임 지금 필요한거는 참가자 테이블.
+
 
         Point point = Point.builder()
                 .user(user)

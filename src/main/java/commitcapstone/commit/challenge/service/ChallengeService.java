@@ -2,13 +2,12 @@ package commitcapstone.commit.challenge.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.dto.ChallengeDetailResponse;
-import commitcapstone.commit.challenge.dto.ChallengeListResponse;
-import commitcapstone.commit.challenge.dto.ChallengeCreateRequest;
-import commitcapstone.commit.challenge.dto.ChallengeCreateResponse;
+import commitcapstone.commit.challenge.dto.*;
 import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.challenge.entity.ChallengeParticipant;
 import commitcapstone.commit.challenge.entity.ChallengeSortType;
 import commitcapstone.commit.challenge.entity.ChallengeType;
+import commitcapstone.commit.challenge.repository.ChallengeParticipantRepository;
 import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.challenge.utils.Utils;
 import commitcapstone.commit.common.code.ChallengeErrorCode;
@@ -16,6 +15,7 @@ import commitcapstone.commit.common.exception.ChallengeException;
 import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.PointType;
 import commitcapstone.commit.exer.repository.PointRepository;
+import commitcapstone.commit.exer.repository.WorkRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,21 +23,28 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class ChallengeService {
     private final UserRepository userRepository;
     private final ChallengeRepository challengeRepository;
     private final PointRepository pointRepository;
+    private final ChallengeParticipantRepository challengeParticipantRepository;
+    private final WorkRepository workRepository;
     private final Utils utils;
 
 
-    public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, Utils utils) {
+    public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, Utils utils) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
         this.pointRepository = pointRepository;
+        this.challengeParticipantRepository = challengeParticipantRepository;
+        this.workRepository = workRepository;
         this.utils = utils;
     }
 
@@ -74,7 +81,7 @@ public class ChallengeService {
         //이미 사용자가 참여중인 챌린지가 있는지 확인
         /*todo: challengeRepository.existsByOwner(user)가 단순히 존재 여부가 아니라 현재 진행 중인 챌린지만 체크하는지 확인 필요 - 완료
         */
-        if (challengeRepository.existsByOwnerAndIsFinishedFalse(user)) {
+        if (challengeParticipantRepository.existsByUserAndIsFinishedFalse(user)) {
             throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
         }
 
@@ -112,6 +119,19 @@ public class ChallengeService {
                 .earnedAt(now)
                 .build();
         pointRepository.save(point);
+
+        ChallengeParticipant challengeParticipant = ChallengeParticipant.builder()
+                .user(user)
+                .challenge(challenge)
+                .isFinished(false)
+                .build();
+
+        challengeParticipantRepository.save(challengeParticipant);
+
+
+
+
+
 
 
 
@@ -151,17 +171,92 @@ public class ChallengeService {
         }
     }
 
-    public ChallengeDetailResponse getChallengeDetail(Long id) {
+    public ChallengeDetailResponse getChallengeDetail(Long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + email));
+
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
 
-        User user = userRepository.findById(challenge.getOwner().getId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지의 유저가 존재하지 않습니다."));
+//        User user = userRepository.findById(challenge.getOwner().getId())
+//                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지에 유저가 존재하지 않습니다."));
 
-        return ChallengeDetailResponse.from(challenge, user);
+        int partiicipants = challengeParticipantRepository.countByChallenge(challenge);
+        ChallengeDetailResponse response = ChallengeDetailResponse.from(challenge, user, partiicipants);
+        boolean isJoined = challengeParticipantRepository.existsByUserAndChallengeAndIsFinishedFalse(user, challenge);
+
+        if (isJoined) {
+            return challengeJoinUserDetail(response, user, challenge);
+        }
+        return response;
+
+
+
+
     }
 
+    public ChallengeDetailResponse challengeJoinUserDetail(ChallengeDetailResponse response, User user, Challenge challenge) {
+        List<ChallengeMyProgress> progressList = new ArrayList<>();
+        LocalDate start = challenge.getStartDate();
+        LocalDate end = challenge.getEndDate();
+        LocalDate today = LocalDate.now();
 
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+
+            int achieve = workRepository.getTotalDurationByUserAndDate(user, date); // 쿼리 필요
+            boolean isToday = date.equals(today);
+
+            progressList.add(ChallengeMyProgress.builder()
+                    .day(date)
+                    .targetMin(challenge.getTargetMinutes())
+                    .achieveMin(achieve)
+                    .type(challenge.getType())
+                    .isToday(isToday)
+                    .build());
+        }
+
+        response.setMyProgressList(progressList);
+        return response;
+    }
+
+    public ChallengeJoinResponse joinChallenge(long id, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + email));
+
+
+        Challenge challenge = challengeRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
+
+        if (challengeParticipantRepository.existsByUserAndChallengeAndIsFinishedFalse(user, challenge)) {
+            throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
+        }
+
+
+        LocalDate today = LocalDate.now();
+        if (!today.isBefore(challenge.getStartDate())) {
+            throw new ChallengeException(ChallengeErrorCode.ALREAY_START_CHALLENGE);
+        }
+
+        ChallengeParticipant participant = ChallengeParticipant.builder()
+                .user(user)
+                .challenge(challenge)
+                .isFinished(false)
+                .build();
+
+        challengeParticipantRepository.save(participant);
+
+        LocalDateTime now = LocalDateTime.now();
+        Point point = Point.builder()
+                .user(user)
+                .point(challenge.getBetPoint())
+                .type(PointType.CHALLENGE_MINUS)
+                .earnedAt(now)
+                .build();
+        pointRepository.save(point);
+
+
+        return ChallengeJoinResponse.builder().id(challenge.getId()).build();
+    }
 
 
 
