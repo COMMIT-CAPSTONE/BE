@@ -21,7 +21,7 @@ public class ChallengeCreateRequest {
     private ChallengeType challengeType;
 
     @NotNull(message = "베팅 포인트는 필수입니다.")
-    private int betPoint;
+    private Integer betPoint;
 
     @NotNull(message = "목표 시간(분)은 필수입니다.")
     private Integer targetMinutes;
