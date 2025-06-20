@@ -1,5 +1,6 @@
 package commitcapstone.commit.challenge.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -21,7 +22,9 @@ public class ChallengeCreateRequest {
 
     private int targetMinutes;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate startDate;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate endDate;
 }
