@@ -237,7 +237,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
 
-        if (challengeParticipantRepository.existsByUserAndChallengeAndFinishedFalse(user, challenge)) {
+        if (challengeParticipantRepository.existsByUserAndFinishedFalse(user)) {
             throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
         }
 
