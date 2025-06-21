@@ -77,7 +77,7 @@ public class ExerService {
         pointRepository.save(point);
 
         log.info("addPoint : " + addPoint);
-        int todayTotalTime = workRepository.getTodayDuration(user.getId(), today);
+        int todayTotalTime = workRepository.getTodayDuration(user, today);
         int totalTime = workRepository.getTotalDuration(user.getId());
         int totalPoint = pointRepository.findTotalPointByUserId(user.getId());
 
@@ -93,11 +93,11 @@ public class ExerService {
                 int totalTime = workRepository.getTotalDuration(user.getId());
                 return new UserExerTimeResponse("TOTAL", totalTime);
             case "TODAY":
-                int statTodayTime = workRepository.getTodayDuration(user.getId(), today);
+                int statTodayTime = workRepository.getTodayDuration(user, today);
                 int todayTimeAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), today, today);
                 return new UserExerTimeStatResponse("TODAY", statTodayTime, todayTimeAvg);
             case "today":
-                int todayTime = workRepository.getTodayDuration(user.getId(), today);
+                int todayTime = workRepository.getTodayDuration(user, today);
                 return new UserExerTimeResponse("today", todayTime);
             case "WEEK":
                 LocalDate weekStartDate = getWeekStartDate();

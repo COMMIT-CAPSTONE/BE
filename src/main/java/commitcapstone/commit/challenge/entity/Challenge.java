@@ -51,7 +51,7 @@ public class Challenge {
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    @Column(name = "is_finished", nullable = false)
-    private boolean isFinished = false;
+    @Column(name = "finished", nullable = false)
+    private boolean finished = false;
 
 }
