@@ -28,6 +28,6 @@ public class ChallengeParticipant {
 
     // 챌린지가 종료되었는지 여부
     @Column(nullable = false)
-    private boolean isFinished;
+    private boolean finished;
 
 }

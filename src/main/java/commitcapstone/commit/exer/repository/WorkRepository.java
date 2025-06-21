@@ -15,17 +15,14 @@ import java.util.List;
 
 @Repository
 public interface WorkRepository extends JpaRepository<Work, Long> {
-    @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :date")
-    int getTotalDurationByUserAndDate(@Param("user") User user, @Param("date") LocalDate date);
-
     /*
      * 일일 운동 시간을 구하는 쿼리
      * @param : userId 사용자 아이디로 특정 사용자의 오늘 운동시간을 구함
      * @param : today 오늘 날짜로 서비스 코드에서 오늘 날짜를 구해 LocalDate타입으로 보내줌
      * return : 특정 사용자의 일일 운동 시간을 모두 더해 보내줌
      * */
-    @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user.id = :userId AND w.workDate = :today")
-    int getTodayDuration(@Param("userId") Long userId, @Param("today") LocalDate today);
+    @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :today")
+    int getTodayDuration(@Param("userId") User user, @Param("today") LocalDate today);
 
     /*
      * 사용자의 총 운동 시간을 구하는 쿼리

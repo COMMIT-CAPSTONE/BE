@@ -91,7 +91,7 @@ public class ChallengeService {
             //이미 사용자가 참여중인 챌린지가 있는지 확인
             /*todo: challengeRepository.existsByOwner(user)가 단순히 존재 여부가 아니라 현재 진행 중인 챌린지만 체크하는지 확인 필요 - 완료
             */
-            if (challengeParticipantRepository.existsByUserAndIsFinishedFalse(user)) {
+            if (challengeParticipantRepository.existsByUserAndFinishedFalse(user)) {
                 throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
             }
 
@@ -115,7 +115,7 @@ public class ChallengeService {
                     .targetMinutes(request.getTargetMinutes())
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
-                    .isFinished(false)
+                    .finished(false)
                     .createdAt(now).build();
 
             challengeRepository.save(challenge);
@@ -133,7 +133,7 @@ public class ChallengeService {
             ChallengeParticipant challengeParticipant = ChallengeParticipant.builder()
                     .user(user)
                     .challenge(challenge)
-                    .isFinished(false)
+                    .finished(false)
                     .build();
 
             challengeParticipantRepository.save(challengeParticipant);
@@ -188,20 +188,15 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
 
-//        User user = userRepository.findById(challenge.getOwner().getId())
-//                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지에 유저가 존재하지 않습니다."));
 
         int partiicipants = challengeParticipantRepository.countByChallenge(challenge);
         ChallengeDetailResponse response = ChallengeDetailResponse.from(challenge, user, partiicipants);
-        boolean isJoined = challengeParticipantRepository.existsByUserAndChallengeAndIsFinishedFalse(user, challenge);
+        boolean isJoined = challengeParticipantRepository.existsByUserAndChallengeAndFinishedFalse(user, challenge);
 
         if (isJoined) {
             return challengeJoinUserDetail(response, user, challenge);
         }
         return response;
-
-
-
 
     }
 
@@ -212,22 +207,27 @@ public class ChallengeService {
         LocalDate today = LocalDate.now();
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
-
-            int achieve = workRepository.getTotalDurationByUserAndDate(user, date); // 쿼리 필요
+            int achieve = workRepository.getTodayDuration(user, date);
             boolean isToday = date.equals(today);
 
-            progressList.add(ChallengeMyProgress.builder()
-                    .day(date)
-                    .targetMin(challenge.getTargetMinutes())
-                    .achieveMin(achieve)
-                    .type(challenge.getType())
-                    .isToday(isToday)
-                    .build());
+            ChallengeMyProgress progress;
+
+            if (challenge.getType() == ChallengeType.DAILY) {
+                progress = ChallengeMyProgress.dailyFrom(date, challenge.getTargetMinutes(), achieve, isToday);
+            } else if (challenge.getType() == ChallengeType.TOTAL) {
+                progress = ChallengeMyProgress.totalForm(date, challenge.getTargetMinutes(), achieve, isToday);
+            } else {
+                // 혹시 future type 생길 경우 방어 코드
+                throw new IllegalStateException("Unknown ChallengeType: " + challenge.getType());
+            }
+
+            progressList.add(progress);
         }
 
         response.setMyProgressList(progressList);
         return response;
     }
+
 
     public ChallengeJoinResponse joinChallenge(long id, String email) {
         User user = userRepository.findByEmail(email)
@@ -237,7 +237,7 @@ public class ChallengeService {
         Challenge challenge = challengeRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
 
-        if (challengeParticipantRepository.existsByUserAndChallengeAndIsFinishedFalse(user, challenge)) {
+        if (challengeParticipantRepository.existsByUserAndFinishedFalse(user)) {
             throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);
         }
 
@@ -250,7 +250,7 @@ public class ChallengeService {
         ChallengeParticipant participant = ChallengeParticipant.builder()
                 .user(user)
                 .challenge(challenge)
-                .isFinished(false)
+                .finished(false)
                 .build();
 
         challengeParticipantRepository.save(participant);
