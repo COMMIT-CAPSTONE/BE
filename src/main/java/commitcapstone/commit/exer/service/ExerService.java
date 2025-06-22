@@ -2,28 +2,29 @@ package commitcapstone.commit.exer.service;
 
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.common.code.ExerErrorCode;
 import commitcapstone.commit.common.exception.ExerException;
 
 import commitcapstone.commit.exer.dto.request.CheckOutRequest;
-import commitcapstone.commit.exer.dto.response.CheckOutResponse;
-import commitcapstone.commit.exer.dto.response.ExerTimeResponse;
-import commitcapstone.commit.exer.dto.response.UserExerTimeResponse;
-import commitcapstone.commit.exer.dto.response.UserExerTimeStatResponse;
+import commitcapstone.commit.exer.dto.response.*;
+import commitcapstone.commit.exer.entity.ExerStatType;
 import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.PointType;
 import commitcapstone.commit.exer.entity.Work;
 import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
 import lombok.extern.slf4j.Slf4j;
-import org.hibernate.annotations.Check;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import static java.time.temporal.ChronoUnit.DAYS;
 
 
@@ -84,39 +85,58 @@ public class ExerService {
 
         return new CheckOutResponse(min, todayTotalTime, totalTime, addPoint, totalPoint);
     }
-    public ExerTimeResponse getExerTime(String email, String type) {
+    public UserExerTimeStatResponse getExerTime(String email) {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+
         LocalDate today = LocalDate.now();
-        switch (type) {
-            case "TOTAL":
-                int totalTime = workRepository.getTotalDuration(user.getId());
-                return new UserExerTimeResponse("TOTAL", totalTime);
-            case "TODAY":
-                int statTodayTime = workRepository.getTodayDuration(user, today);
-                int todayTimeAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), today, today);
-                return new UserExerTimeStatResponse("TODAY", statTodayTime, todayTimeAvg);
-            case "today":
-                int todayTime = workRepository.getTodayDuration(user, today);
-                return new UserExerTimeResponse("today", todayTime);
-            case "WEEK":
-                LocalDate weekStartDate = getWeekStartDate();
-                LocalDate weekEndDate = getWeekStartDate().plusDays(6);
-                int weekTime = workRepository.getPeriodTotalTimeByUser(user.getId(), weekStartDate, weekEndDate);
+        LocalDate weekStartDate = getWeekStartDate();
+        LocalDate weekEndDate = weekStartDate.plusDays(6);
+        LocalDate monthStartDate = getMonthStartDate();
+        LocalDate monthEndDate = monthStartDate.plusDays(29);
 
-                int weekTimeAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), weekStartDate, weekEndDate);
-                return new UserExerTimeStatResponse("WEEK", weekTime, weekTimeAvg);
-            case "MONTH":
-                LocalDate monthStartDate = getMonthStartDate();
-                LocalDate monthEndDate = getMonthStartDate().plusDays(29);
-                int monthTime = workRepository.getPeriodTotalTimeByUser(user.getId(), monthStartDate, monthEndDate);
 
-                int monthTimeAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), monthStartDate, monthEndDate);
-                return new UserExerTimeStatResponse("MONTH", monthTime, monthTimeAvg);
-            default:
-                throw new ExerException(ExerErrorCode.INVALID_TIME_TYPE);
+        long totalTime = workRepository.getTotalDuration(user.getId());
+        long todayTime = workRepository.getTodayDuration(user, today);
+        long todayAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), today, today);
+
+        long weekTime = workRepository.getPeriodTotalTimeByUser(user.getId(), weekStartDate, weekEndDate);
+        long weekAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), weekStartDate, weekEndDate);
+
+        long monthTime = workRepository.getPeriodTotalTimeByUser(user.getId(), monthStartDate, monthEndDate);
+        long monthAvg = workRepository.getPeriodToTalTimeBuOtherUsers(user.getId(), monthStartDate, monthEndDate);
+
+
+        List<ExerWeekStat> weekStats = getFullDailyStats(user, weekStartDate, weekEndDate);
+
+        return new UserExerTimeStatResponse(
+                new ExerTimeBasic(ExerStatType.USER_TODAY, todayTime),
+                new ExerTimeBasic(ExerStatType.USER_TOTAL, totalTime),
+                new ExerTimeWithAvg(ExerStatType.TODAY, todayTime, todayAvg),
+                new ExerTimeWithAvg(ExerStatType.WEEK, weekTime, weekAvg),
+                new ExerTimeWithAvg(ExerStatType.MONTH, monthTime, monthAvg),
+                weekStats,
+                LocalDate.now()
+        );
+
+    }public List<ExerWeekStat> getFullDailyStats(User user, LocalDate start, LocalDate end) {
+
+        List<ExerWeekStat> partialStats = workRepository.findDailyDurationsGrouped(user, start, end);
+
+
+        Map<LocalDate, Long> statMap = partialStats.stream()
+                .collect(Collectors.toMap(ExerWeekStat::getWorkDate, ExerWeekStat::getDuration));
+
+
+        List<ExerWeekStat> fullStats = new ArrayList<>();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            long duration = statMap.getOrDefault(date, 0L);
+            fullStats.add(new ExerWeekStat(date, duration));
         }
+
+        return fullStats;
     }
+
 
     public LocalDate getWeekStartDate() {
         LocalDate now = LocalDate.now();

@@ -1,6 +1,9 @@
 package commitcapstone.commit.exer.repository;
 
 import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.challenge.entity.ChallengeParticipant;
+import commitcapstone.commit.exer.dto.response.ExerWeekStat;
 import commitcapstone.commit.exer.entity.Work;
 
 
@@ -22,7 +25,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * return : 특정 사용자의 일일 운동 시간을 모두 더해 보내줌
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :today")
-    int getTodayDuration(@Param("userId") User user, @Param("today") LocalDate today);
+    int getTodayDuration(@Param("user") User user, @Param("today") LocalDate today);
 
     /*
      * 사용자의 총 운동 시간을 구하는 쿼리
@@ -61,5 +64,18 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
+    @Query("""
+    SELECT new commitcapstone.commit.exer.dto.response.ExerWeekStat(w.workDate, SUM(w.duration)) 
+    FROM Work w 
+    WHERE w.user = :user AND w.workDate BETWEEN :start AND :end 
+    GROUP BY w.workDate
+""")
+    List<ExerWeekStat> findDailyDurationsGrouped(
+            @Param("user") User user,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end
+    );
+
 }
 
