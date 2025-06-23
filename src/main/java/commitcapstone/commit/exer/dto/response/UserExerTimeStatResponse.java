@@ -4,23 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter
+import java.time.LocalDate;
+import java.util.List;
+
 @Getter
+@Setter
 @AllArgsConstructor
-public class UserExerTimeStatResponse implements ExerTimeResponse{
-
-    private String type;
-    private Integer time;
-    private Integer avgTime;
-
-
-    @Override
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public Integer getTime() {
-        return time;
-    }
+public class UserExerTimeStatResponse {
+    private ExerTimeBasic today;
+    private ExerTimeBasic total;
+    private ExerTimeWithAvg todayStat;
+    private ExerTimeWithAvg weekStat;
+    private ExerTimeWithAvg monthStat;
+    private List<ExerWeekStat> weekStats;
+    private LocalDate daily;
 }

@@ -29,6 +29,6 @@ public class Work {
     private Challenge challenge;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false, unique = true)
+    @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
