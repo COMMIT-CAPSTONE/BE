@@ -1,5 +1,6 @@
 package commitcapstone.commit.auth.entity;
 
+import commitcapstone.commit.tier.TierType;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,14 +32,9 @@ public class User {
     @Column(name = "profile_image_url", columnDefinition = "TEXT")
     private String profileImageUrl;
 
-    @Column(columnDefinition = "INT DEFAULT 0")
-    private Integer exp;
-
-    @Column(columnDefinition = "INT DEFAULT 0")
-    private Integer point;
-
-    @Column(length = 30, columnDefinition = "VARCHAR(30) DEFAULT 'bronze'")
-    private String tier;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tier")
+    private TierType tier = TierType.헬린이;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp

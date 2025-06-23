@@ -14,6 +14,7 @@ import commitcapstone.commit.exer.entity.PointType;
 import commitcapstone.commit.exer.entity.Work;
 import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
+import commitcapstone.commit.tier.TierService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -35,18 +36,18 @@ public class ExerService {
     private final WorkRepository workRepository;
     private final PointService pointService;
     private final PointRepository pointRepository;
-    private final ChallengeRepository challengeRepository;
+    private final TierService tierService;
 
     @Value("${config.start_date}")
     private String startDate;
 
 
-    public ExerService(UserRepository userRepository, WorkRepository workRepository, PointService pointService, PointRepository pointRepository, ChallengeRepository challengeRepository) {
+    public ExerService(UserRepository userRepository, WorkRepository workRepository, PointService pointService, PointRepository pointRepository, TierService tierService) {
         this.userRepository = userRepository;
         this.workRepository = workRepository;
         this.pointService = pointService;
         this.pointRepository = pointRepository;
-        this.challengeRepository = challengeRepository;
+        this.tierService = tierService;
     }
 
     @Transactional
@@ -82,6 +83,7 @@ public class ExerService {
         int totalTime = workRepository.getTotalDuration(user.getId());
         int totalPoint = pointRepository.findTotalPointByUserId(user.getId());
 
+        tierService.updateTier(user);
 
         return new CheckOutResponse(min, todayTotalTime, totalTime, addPoint, totalPoint);
     }

@@ -3,6 +3,7 @@ package commitcapstone.commit.challenge.dto;
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
+import commitcapstone.commit.tier.TierType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,7 +37,7 @@ public class ChallengeDetailResponse {
 
     //사용자 정보
     private String userName;
-    private String tier;
+    private TierType tier;
 
     public static ChallengeDetailResponse from(Challenge challenge, User user, int participants) {
         return ChallengeDetailResponse.builder()
