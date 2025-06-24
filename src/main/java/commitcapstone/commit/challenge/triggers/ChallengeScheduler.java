@@ -91,6 +91,8 @@ public class ChallengeScheduler {
             int succesPoint = (int) (ch.getBetPoint() * 1.5) + ((failCount * ch.getBetPoint()) / successCount);
 
             for (ChallengeParticipant cp : successList) {
+                cp.setSuccess(true);
+
                 Point point = Point.builder()
                         .point(succesPoint)
                         .user(cp.getUser())
