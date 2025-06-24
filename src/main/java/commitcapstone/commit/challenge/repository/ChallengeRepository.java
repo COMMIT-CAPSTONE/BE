@@ -37,4 +37,21 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     Page<Challenge> findByTypeAndTitle(@Param("type") ChallengeType type,
                                        @Param("keyword") String keyword,
                                        Pageable pageable);
+
+    //랭킹을 구하기
+    @Query(
+            value = "SELECT u.id, u.name, u.tier, COUNT(cp.id) AS success_count " +
+                    "FROM user u " +
+                    "JOIN challenge_participant cp ON u.id = cp.user_id " +
+                    "WHERE cp.success = TRUE " +
+                    "GROUP BY u.id, u.name, u.tier " +
+                    "ORDER BY success_count DESC " +
+                    "LIMIT 10",
+            nativeQuery = true
+    )
+    List<Object[]> findTop10UsersBySuccessCountNative();
+
+
+
+
 }

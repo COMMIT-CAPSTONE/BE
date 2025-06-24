@@ -77,5 +77,18 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
             @Param("end") LocalDate end
     );
 
+
+    @Query(
+            value = "SELECT u.id, u.name, u.tier, SUM(c.exer_time) AS total_exer_time " +
+                    "FROM user u " +
+                    "JOIN challenge c ON u.id = c.user_id " +
+                    "WHERE c.date BETWEEN :start AND :end " +
+                    "GROUP BY u.id, u.name, u.tier " +
+                    "ORDER BY total_exer_time DESC " +
+                    "LIMIT 10",
+            nativeQuery = true
+    )
+    List<Object[]> findExerTimeRankBetween(@Param("start") LocalDate start, @Param("end") LocalDate end);
+
 }
 

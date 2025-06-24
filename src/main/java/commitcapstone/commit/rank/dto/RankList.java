@@ -1,0 +1,20 @@
+package commitcapstone.commit.rank.dto;
+
+import lombok.*;
+
+import java.util.List;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@Builder
+public class RankList {
+
+    List<BaseRankDto> challengeSuccessRanks;
+    List<BaseRankDto> havePointRanks;
+    List<BaseRankDto> monthExerTimeRanks;
+    List<BaseRankDto> weekExerTimeRanks;
+    List<BaseRankDto> dailyExerTimeRanks;
+
+
+}
