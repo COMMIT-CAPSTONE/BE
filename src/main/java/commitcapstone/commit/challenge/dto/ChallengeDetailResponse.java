@@ -25,6 +25,7 @@ public class ChallengeDetailResponse {
     private ChallengeType challengeType;
     private int challengeBetPoint;
     private int targetMinutes;
+    private int totalAcheiveMinutes;
     private LocalDate startDate;
     private LocalDate endDate;
     private boolean isFinished;

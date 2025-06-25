@@ -207,9 +207,13 @@ public class ChallengeService {
         LocalDate start = challenge.getStartDate();
         LocalDate end = challenge.getEndDate();
         LocalDate today = LocalDate.now();
+        int achieve = workRepository.getPeriodTotalTimeByUser(user.getId(), start, end);
+        if (challenge.getType() == ChallengeType.TOTAL) {
+            response.setTotalAcheiveMinutes(achieve);
+        }
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            int achieve = workRepository.getTodayDuration(user, date);
+
             boolean isToday = date.equals(today);
 
             ChallengeMyProgress progress;
@@ -217,10 +221,10 @@ public class ChallengeService {
             if (challenge.getType() == ChallengeType.DAILY) {
                 progress = ChallengeMyProgress.dailyFrom(date, challenge.getTargetMinutes(), achieve, isToday);
             } else if (challenge.getType() == ChallengeType.TOTAL) {
-                progress = ChallengeMyProgress.totalForm(date, challenge.getTargetMinutes(), achieve, isToday);
+               break;
             } else {
-                // 혹시 future type 생길 경우 방어 코드
-                throw new IllegalStateException("Unknown ChallengeType: " + challenge.getType());
+                throw new IllegalArgumentException("Unknown challenge type: " + challenge.getType());
+
             }
 
             progressList.add(progress);
