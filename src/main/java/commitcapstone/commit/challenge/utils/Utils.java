@@ -18,9 +18,9 @@ public class Utils {
             case BETTING_DESC:
                 return Sort.by(Sort.Direction.DESC, "betPoint");
             case TARGET_MIN_ASC:
-                return Sort.by(Sort.Direction.ASC, "goalTime");
+                return Sort.by(Sort.Direction.ASC, "targetMinutes");
             case TARGET_MIN_DESC:
-                return Sort.by(Sort.Direction.DESC, "goalTime");
+                return Sort.by(Sort.Direction.DESC, "targetMinutes");
             default:
                 return Sort.by(Sort.Direction.ASC, "startDate");
         }
