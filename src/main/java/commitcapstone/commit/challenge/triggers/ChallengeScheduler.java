@@ -1,6 +1,5 @@
 package commitcapstone.commit.challenge.triggers;
 
-import commitcapstone.commit.challenge.dto.ChallengeMyProgress;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeParticipant;
 import commitcapstone.commit.challenge.entity.ChallengeType;
@@ -10,9 +9,8 @@ import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.PointType;
 import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import org.aspectj.lang.annotation.Aspect;
+import commitcapstone.commit.notification.entity.NotificationType;
+import commitcapstone.commit.notification.service.NotificationService;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,13 +29,15 @@ public class ChallengeScheduler {
     private final ChallengeParticipantRepository challengeParticipantRepository;
     private final WorkRepository workRepository;
     private final PointRepository pointRepository;
+    private final NotificationService notificationService;
 
-    public ChallengeScheduler(ChallengeRepository challengeRepository, ChallengeParticipantRepository participantRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, PointRepository pointRepository) {
+    public ChallengeScheduler(ChallengeRepository challengeRepository, ChallengeParticipantRepository participantRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, PointRepository pointRepository, NotificationService notificationService) {
         this.challengeRepository = challengeRepository;
         this.participantRepository = participantRepository;
         this.challengeParticipantRepository = challengeParticipantRepository;
         this.workRepository = workRepository;
         this.pointRepository = pointRepository;
+        this.notificationService = notificationService;
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -54,11 +54,11 @@ public class ChallengeScheduler {
 
             ch.setFinished(true);
 
+            boolean isSuccess = false;
             List<ChallengeParticipant> participants = challengeParticipantRepository.findAllByChallenge(ch);
             for (ChallengeParticipant cp : participants) {
                 cp.setFinished(true);
 
-                boolean isSuccess = false;
 
                 if (ch.getType() == ChallengeType.TOTAL) {
                     int total = workRepository.getPeriodTotalTimeByUser(cp.getUser().getId(), ch.getStartDate(), ch.getEndDate());
@@ -92,7 +92,11 @@ public class ChallengeScheduler {
 
             for (ChallengeParticipant cp : successList) {
                 cp.setSuccess(true);
-
+                if (isSuccess) {
+                    notificationService.sendChallengeResultNotification(cp.getUser(), NotificationType.CHALLENGE,  "[" + ch.getTitle() + "]챌린지에 성공하셨습니다.",  succesPoint + "포인트가 지급되었습니다.");
+                } else {
+                    notificationService.sendChallengeResultNotification(cp.getUser(), NotificationType.CHALLENGE, "[" + ch.getTitle() + "]챌린지에 실패하셨습니다." ,  ch.getBetPoint() + "포인트가 차감되었습니다.");
+                }
                 Point point = Point.builder()
                         .point(succesPoint)
                         .user(cp.getUser())
