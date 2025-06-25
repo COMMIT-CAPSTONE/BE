@@ -26,7 +26,7 @@ public class Point {
     @Column(nullable = false)
     private Integer point;
 
-    @Column(length = 255)
+    @Enumerated(EnumType.STRING)
     private PointType type;
 
     @Column(name = "earned_at", nullable = false, updatable = false)

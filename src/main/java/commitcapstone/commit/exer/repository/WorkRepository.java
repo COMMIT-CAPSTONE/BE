@@ -7,6 +7,9 @@ import commitcapstone.commit.exer.dto.response.ExerWeekStat;
 import commitcapstone.commit.exer.entity.Work;
 
 
+import commitcapstone.commit.rank.dto.BaseRankDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import org.springframework.data.jpa.repository.Query;
@@ -77,5 +80,13 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
             @Param("end") LocalDate end
     );
 
+    @Query("SELECT new commitcapstone.commit.rank.dto.BaseRankDto(u.name, u.tier, SUM(w.duration)) " +
+            "FROM User u JOIN Work w ON u.id = w.user.id " +
+            "WHERE w.workDate BETWEEN :start AND :end " +
+            "GROUP BY u.name, u.tier " +
+            "ORDER BY SUM(w.duration) DESC")
+    Page<BaseRankDto> findExerTimeRankBetween(@Param("start") LocalDate start,
+                                              @Param("end") LocalDate end,
+                                              Pageable pageable);
 }
 
