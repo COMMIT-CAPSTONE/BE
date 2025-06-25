@@ -7,6 +7,7 @@ import commitcapstone.commit.challenge.service.ChallengeService;
 import commitcapstone.commit.common.response.SuccessResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -24,6 +25,14 @@ public class ChallengeController {
     public ResponseEntity<SuccessResponse<ChallengeCreateResponse>> postChallenge(@AuthenticationPrincipal String email, @RequestBody ChallengeCreateRequest request) {
         ChallengeCreateResponse response = challengeService.saveChallenge(email, request);
         return ResponseEntity.ok(new SuccessResponse<>("챌린지 생성 성공", response));
+    }
+
+    @GetMapping("/challenges/my")
+    public ResponseEntity<SuccessResponse<ChallengeListResponse>> getMyChallenge(@AuthenticationPrincipal String email) {
+
+        ChallengeListResponse response = challengeService.getMyChallenges(email);
+        return ResponseEntity.ok(new SuccessResponse<>("내 챌린지 조회 성공", response));
+
     }
 
     //기본적으로 챌린지 페이지에 나타내어지는 챌린지 리스트

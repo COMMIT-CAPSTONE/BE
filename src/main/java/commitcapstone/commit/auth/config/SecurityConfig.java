@@ -40,7 +40,8 @@ public class SecurityConfig {
                                 "/swagger-ui/**",
                                 "/swagger-ui.html",
 
-                                        "/api/auth/**",
+                                        "/api/auth/login",
+                                        "/api/auth/refresh",
                                         "/refresh"
 
                         ).permitAll()

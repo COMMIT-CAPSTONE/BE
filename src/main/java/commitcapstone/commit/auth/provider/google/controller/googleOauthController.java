@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.UUID;
 
-@Controller
+@RestController
 @RequestMapping("api/oauth/google")
 public class  googleOauthController {
     private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(googleOauthController.class);
