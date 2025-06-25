@@ -26,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +39,16 @@ public class ChallengeService {
     private final Utils utils;
 
 
+    public ChallengeListResponse getMyChallenges(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+
+        ChallengeParticipant participant = challengeParticipantRepository.findByUserAndFinishedFalse(user)
+                .orElseThrow(() -> new IllegalArgumentException("진행 중인 챌린지가 없습니다."));
+        return challengeRepository.findById(participant.getChallenge().getId())
+                .map(ChallengeListResponse::from)
+                .orElseThrow(() -> new IllegalArgumentException("챌린지 정보를 찾을 수 없습니다."));
+    }
     public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, Utils utils) {
         this.userRepository = userRepository;
         this.challengeRepository = challengeRepository;
@@ -137,13 +146,6 @@ public class ChallengeService {
                     .build();
 
             challengeParticipantRepository.save(challengeParticipant);
-
-
-
-
-
-
-
 
             return ChallengeCreateResponse.builder()
                     .challengeTitle(challenge.getTitle())
