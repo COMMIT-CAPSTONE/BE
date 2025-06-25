@@ -3,6 +3,7 @@ package commitcapstone.commit.challenge.repository;
 import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
+import commitcapstone.commit.rank.dto.BaseRankDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -39,19 +40,13 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
                                        Pageable pageable);
 
     //랭킹을 구하기
-    @Query(
-            value = "SELECT u.id, u.name, u.tier, COUNT(cp.id) AS success_count " +
-                    "FROM user u " +
-                    "JOIN challenge_participant cp ON u.id = cp.user_id " +
-                    "WHERE cp.success = TRUE " +
-                    "GROUP BY u.id, u.name, u.tier " +
-                    "ORDER BY success_count DESC " +
-                    "LIMIT 10",
-            nativeQuery = true
-    )
-    List<Object[]> findTop10UsersBySuccessCountNative();
+    @Query("SELECT new commitcapstone.commit.rank.dto.BaseRankDto(u.name, u.tier, COUNT(cp.id)) " +
+            "FROM User u JOIN ChallengeParticipant cp ON u.id = cp.user.id " +
+            "WHERE cp.success = TRUE " +
+            "GROUP BY u.name, u.tier " +
+            "ORDER BY COUNT(cp.id) DESC")
+    Page<BaseRankDto> findTopUsersBySuccessCount(Pageable pageable);
 
 
-
-
-}
+    
+    }
