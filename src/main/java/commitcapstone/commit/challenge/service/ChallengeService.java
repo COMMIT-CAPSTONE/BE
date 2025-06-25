@@ -163,21 +163,21 @@ public class ChallengeService {
         Sort sort = utils.getSort(sortType);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-
+        LocalDate now = LocalDate.now();
         if (keyword == null || keyword.trim().isEmpty()) {
             if (type.equals(ChallengeType.ALL)) {
                 return challengeRepository.findAll(pageable)
                         .map(ChallengeListResponse::from);
             } else {
-                return challengeRepository.findByType(pageable, type)
+                return challengeRepository.findByType(now, type, pageable)
                         .map(ChallengeListResponse::from);
             }
         } else {
             if (type.equals(ChallengeType.ALL)) {
-                return challengeRepository.findByTitle(keyword, pageable)
+                return challengeRepository.findByTitle(keyword, now, pageable)
                         .map(ChallengeListResponse::from);
             } else {
-                return challengeRepository.findByTypeAndTitle(type, keyword, pageable)
+                return challengeRepository.findByTypeAndTitle(type, keyword, now, pageable)
                         .map(ChallengeListResponse::from);
             }
         }

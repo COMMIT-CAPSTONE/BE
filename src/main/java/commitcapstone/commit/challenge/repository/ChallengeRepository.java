@@ -25,19 +25,30 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
     List<Challenge> findAllByEndDateBeforeAndFinishedFalse(LocalDate date);
 
     //타입만 선택
-    Page<Challenge> findByType(Pageable pageable, ChallengeType type);
+    @Query("SELECT c FROM Challenge c WHERE c.startDate > :today AND c.type = :type")
+    Page<Challenge> findByType(
+            @Param("today") LocalDate today,
+            @Param("type") ChallengeType type,
+            Pageable pageable
+    );
 
     //검색어 입력 , 타입은 ALL
-    @Query("SELECT c FROM Challenge c WHERE c.title LIKE %:keyword%")
+    @Query("SELECT c FROM Challenge c WHERE c.title LIKE %:keyword% AND c.startDate > :today")
     Page<Challenge> findByTitle(
-                                       @Param("keyword") String keyword,
-                                       Pageable pageable);
+            @Param("keyword") String keyword,
+            @Param("today") LocalDate today,
+            Pageable pageable
+    );
 
     //검색어 입력, 타입 선택
-    @Query("SELECT c FROM Challenge c WHERE c.title LIKE %:keyword% AND c.type = :type")
-    Page<Challenge> findByTypeAndTitle(@Param("type") ChallengeType type,
-                                       @Param("keyword") String keyword,
-                                       Pageable pageable);
+    @Query("SELECT c FROM Challenge c WHERE c.title LIKE %:keyword% AND c.type = :type AND c.startDate > :today")
+    Page<Challenge> findByTypeAndTitle(
+            @Param("type") ChallengeType type,
+            @Param("keyword") String keyword,
+            @Param("today") LocalDate today,
+            Pageable pageable
+    );
+
 
     //랭킹을 구하기
     @Query("SELECT new commitcapstone.commit.rank.dto.BaseRankDto(u.name, u.tier, COUNT(cp.id)) " +
