@@ -1,6 +1,5 @@
 package commitcapstone.commit.challenge.repository;
 
-import commitcapstone.commit.auth.entity.User;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.rank.dto.BaseRankDto;

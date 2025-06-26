@@ -1,5 +1,6 @@
-package commitcapstone.commit.auth.entity;
+package commitcapstone.commit.user;
 
+import commitcapstone.commit.auth.entity.Gym;
 import commitcapstone.commit.tier.TierType;
 import jakarta.persistence.*;
 import lombok.*;

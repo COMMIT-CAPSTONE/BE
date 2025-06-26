@@ -1,6 +1,9 @@
 package commitcapstone.commit.common;
 
+import commitcapstone.commit.common.exception.ChallengeException;
+import commitcapstone.commit.common.exception.ExerException;
 import commitcapstone.commit.common.exception.OauthException;
+import commitcapstone.commit.common.exception.UserException;
 import commitcapstone.commit.common.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -25,4 +28,29 @@ public class GlobalExceptionHandler {
                 .status(e.getErrorCode().getHttpStatus().value())
                 .body(new ErrorResponse(e.getMessage()));
     }
+
+    @ExceptionHandler(ExerException.class)
+    public ResponseEntity<ErrorResponse> handleOauthException(ExerException e) {
+        log.error("ExerException", e);
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus().value())
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(ChallengeException.class)
+    public ResponseEntity<ErrorResponse> handleOauthException(ChallengeException e) {
+        log.error("ExerException", e);
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus().value())
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ErrorResponse> handleOauthException(UserException e) {
+        log.error("ExerException", e);
+        return ResponseEntity
+                .status(e.getErrorCode().getHttpStatus().value())
+                .body(new ErrorResponse(e.getMessage()));
+    }
+
 }

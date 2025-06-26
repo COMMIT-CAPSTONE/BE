@@ -1,10 +1,7 @@
 package commitcapstone.commit.exer.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.repository.ChallengeRepository;
-import commitcapstone.commit.common.code.ExerErrorCode;
-import commitcapstone.commit.common.exception.ExerException;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 
 import commitcapstone.commit.exer.dto.request.CheckOutRequest;
 import commitcapstone.commit.exer.dto.response.*;

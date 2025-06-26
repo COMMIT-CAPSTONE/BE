@@ -1,6 +1,6 @@
 package commitcapstone.commit.auth.utils;
 
-import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
