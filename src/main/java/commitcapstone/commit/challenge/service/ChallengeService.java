@@ -207,9 +207,10 @@ public class ChallengeService {
         LocalDate start = challenge.getStartDate();
         LocalDate end = challenge.getEndDate();
         LocalDate today = LocalDate.now();
-        int achieve = workRepository.getPeriodTotalTimeByUser(user.getId(), start, end);
+
+        int totalAcheieve = workRepository.getPeriodTotalTimeByUser(user.getId(), start, end);
         if (challenge.getType() == ChallengeType.TOTAL) {
-            response.setTotalAcheiveMinutes(achieve);
+            response.setTotalAcheiveMinutes(totalAcheieve);
         }
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
@@ -217,7 +218,7 @@ public class ChallengeService {
             boolean isToday = date.equals(today);
 
             ChallengeMyProgress progress;
-
+            int achieve = workRepository.getTodayDuration(user, date);
             if (challenge.getType() == ChallengeType.DAILY) {
                 progress = ChallengeMyProgress.dailyFrom(date, challenge.getTargetMinutes(), achieve, isToday);
             } else if (challenge.getType() == ChallengeType.TOTAL) {
