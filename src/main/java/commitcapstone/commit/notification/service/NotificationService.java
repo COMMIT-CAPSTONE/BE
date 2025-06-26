@@ -1,18 +1,15 @@
 package commitcapstone.commit.notification.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.notification.NotificationRepository;
 import commitcapstone.commit.notification.entity.Notification;
 import commitcapstone.commit.notification.entity.NotificationType;
 import commitcapstone.commit.notification.dto.NotificationViewResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

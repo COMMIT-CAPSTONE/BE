@@ -1,7 +1,7 @@
 package commitcapstone.commit.challenge.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.challenge.dto.*;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeParticipant;

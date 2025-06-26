@@ -1,7 +1,7 @@
 package commitcapstone.commit.tier;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

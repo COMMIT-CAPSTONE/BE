@@ -1,8 +1,6 @@
 package commitcapstone.commit.exer.repository;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.challenge.entity.Challenge;
-import commitcapstone.commit.challenge.entity.ChallengeParticipant;
+import commitcapstone.commit.user.User;
 import commitcapstone.commit.exer.dto.response.ExerWeekStat;
 import commitcapstone.commit.exer.entity.Work;
 
