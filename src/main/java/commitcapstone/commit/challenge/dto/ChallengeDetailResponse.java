@@ -1,6 +1,6 @@
 package commitcapstone.commit.challenge.dto;
 
-import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.user.User;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.tier.TierType;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
