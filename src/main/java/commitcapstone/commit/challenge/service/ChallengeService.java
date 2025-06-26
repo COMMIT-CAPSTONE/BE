@@ -166,7 +166,7 @@ public class ChallengeService {
         LocalDate now = LocalDate.now();
         if (keyword == null || keyword.trim().isEmpty()) {
             if (type.equals(ChallengeType.ALL)) {
-                return challengeRepository.findAll(pageable)
+                return challengeRepository.findByStartDateAfter(now, pageable)
                         .map(ChallengeListResponse::from);
             } else {
                 return challengeRepository.findByType(now, type, pageable)

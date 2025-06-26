@@ -24,6 +24,8 @@ public interface ChallengeRepository extends JpaRepository<Challenge, Long> {
 
     List<Challenge> findAllByEndDateBeforeAndFinishedFalse(LocalDate date);
 
+    @Query("SELECT c FROM Challenge c WHERE c.startDate > :startDate AND c.finished = false")
+    Page<Challenge> findByStartDateAfter(@Param("startDate") LocalDate startDate, Pageable pageable);
     //타입만 선택
     @Query("SELECT c FROM Challenge c WHERE c.startDate > :today AND c.type = :type")
     Page<Challenge> findByType(
