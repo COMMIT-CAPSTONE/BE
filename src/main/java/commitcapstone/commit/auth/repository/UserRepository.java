@@ -18,4 +18,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u.tier FROM User u WHERE u.id = :user")
     Optional<TierType> findTierByUserId(@Param("user") User user);
+
+    boolean existsByName(String name);
 }

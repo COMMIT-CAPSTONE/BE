@@ -40,8 +40,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String path = request.getRequestURI();
 
-        // 인증 제외 경로
-        if (path.startsWith("/api/auth") || path.startsWith("/api/oauth") || path.startsWith("/oauth") || path.equals("/oauth/google/login")) {
+        if (path.startsWith("/api/auth/login") || path.startsWith("/api/auth/refresh") || path.startsWith("/api/oauth")) {
             filterChain.doFilter(request, response);
             return;
         }

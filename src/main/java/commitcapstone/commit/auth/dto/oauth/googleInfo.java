@@ -17,4 +17,5 @@ public class googleInfo implements OauthUserInfo {
     public String getEmail() {
         return email;
     }
+
 }
