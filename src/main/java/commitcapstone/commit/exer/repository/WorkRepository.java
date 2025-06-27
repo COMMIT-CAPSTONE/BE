@@ -86,5 +86,33 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     Page<BaseRankDto> findExerTimeRankBetween(@Param("start") LocalDate start,
                                               @Param("end") LocalDate end,
                                               Pageable pageable);
+
+    //평균 입장 시간 (분) = (운동 시간들의 총합) ÷ (입장 횟수)
+    @Query("""
+    SELECT COALESCE(SUM(w.duration), 0) / COUNT(w)
+    FROM Work w
+    WHERE w.user.id = :userId
+      AND w.workDate BETWEEN :startDate AND :endDate
+""")
+    int getAverageWorkoutDurationByUser(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    //최대 입장 시간 (분) = MAX(운동 시간)
+    @Query("""
+    SELECT MAX(w.duration)
+    FROM Work w
+    WHERE w.user.id = :userId
+      AND w.workDate BETWEEN :startDate AND :endDate
+""")
+    int getMaxWorkoutDurationByUser(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+
 }
 
