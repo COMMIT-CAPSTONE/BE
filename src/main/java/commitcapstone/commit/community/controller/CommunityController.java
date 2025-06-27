@@ -19,12 +19,13 @@
         private final CommunityService communityService;
 
         @PostMapping("/post")
-        public ResponseEntity<SuccessResponse<Page>> addCommunityPosts(@AuthenticationPrincipal String email,
+        public ResponseEntity<SuccessResponse<Page>> addCommunityPost(@AuthenticationPrincipal String email,
                                                                        @RequestBody CommunityPostRequest request) {
-
+            Page response = communityService.addCommunityPost(email, request);
             return ResponseEntity.ok(new SuccessResponse<>("커뮤니티 게시글 작성 성공", response));
-
         }
+
+
         @GetMapping("/post")
         public ResponseEntity<SuccessResponse<CommunityPostsResponse>> getCommunityPosts(@RequestParam(defaultValue = "") String keyWord,
                                                                                          @RequestParam(defaultValue = "LATEST") CommunitySortType sort,

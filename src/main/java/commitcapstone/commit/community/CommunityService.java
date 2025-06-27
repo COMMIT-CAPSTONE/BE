@@ -1,6 +1,7 @@
 package commitcapstone.commit.community;
 
 import commitcapstone.commit.community.dto.CommunityPostBase;
+import commitcapstone.commit.community.dto.CommunityPostRequest;
 import commitcapstone.commit.community.dto.CommunityPostsResponse;
 import commitcapstone.commit.community.entity.Community;
 import commitcapstone.commit.community.entity.CommunitySortType;
@@ -23,6 +24,15 @@ public class CommunityService {
     private final CommentRepository commentRepository;
     private final ReactionRepository reactionRepository;
 
+    public void addCommunityPost(String email, CommunityPostRequest request) {
+        Community community = Community.builder()
+                .title(request.getTitle())
+                .content(request.getContent())
+                .authorEmail(email)
+                .build();
+
+        communityRepository.save(community);
+    }
     public CommunityPostsResponse getCommunityPosts( int page, int size, String keyword, CommunitySortType sort) {
         Sort sortOption = switch (sort) {
             case LATEST -> Sort.by(Sort.Direction.DESC, "createdAt");
