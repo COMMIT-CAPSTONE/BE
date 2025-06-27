@@ -58,6 +58,11 @@ public class CommunityService {
             response.getPosts().add(postBase);
         }
 
+        response.setKeyword(keyword);
+        response.setSortType(sort);
+
+        return response;
+
     }
 
 }
