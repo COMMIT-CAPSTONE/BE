@@ -36,6 +36,9 @@ public class Challenge {
     @Column(nullable = false)
     private ChallengeType type;
 
+    @Column(name = "challenge_img", nullable = false)
+    private int ChallengeImg;
+
     @Column(name = "bet_point", nullable = false)
     private int betPoint;
 
