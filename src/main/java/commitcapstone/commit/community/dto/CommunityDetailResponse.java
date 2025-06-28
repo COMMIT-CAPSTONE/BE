@@ -19,6 +19,7 @@ public class CommunityDetailResponse {
     private String content; // 게시글 내용
     private String authorName; // 작성자 이름
     private Long authorId; // 작성자 ID
+    private int authorProfile; // 작성자 프로필 이미지
     private TierType authorTier; // 작성자 티어
     private LocalDateTime createdAt; // 작성일시
     private LocalDateTime updatedAt; // 수정일시

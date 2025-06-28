@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class ChallengeService {
@@ -61,6 +62,7 @@ public class ChallengeService {
 
         @Transactional
         public ChallengeCreateResponse saveChallenge(String email, ChallengeCreateRequest request) {
+
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
 
@@ -115,6 +117,8 @@ public class ChallengeService {
             }
 
 
+            int challengeImgNum = new Random().nextInt(6);
+
             LocalDateTime now = LocalDateTime.now();
             Challenge challenge = Challenge.builder()
                     .owner(user)
@@ -122,6 +126,7 @@ public class ChallengeService {
                     .description(request.getChallengeDescription())
                     .type(request.getChallengeType())
                     .betPoint(request.getBetPoint())
+                    .ChallengeImg(challengeImgNum)
                     .targetMinutes(request.getTargetMinutes())
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())

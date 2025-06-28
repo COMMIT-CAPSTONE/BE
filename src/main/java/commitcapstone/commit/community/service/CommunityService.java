@@ -88,6 +88,7 @@ public class CommunityService {
                     .authorName(community.getAuthor().getName())
                     .authorId(community.getAuthor().getId())
                     .authorTier(community.getAuthor().getTier())
+                    .authorProfile(community.getAuthor().getProfile())
                     .commentCount(commentRepository.countByCommunityId(community.getId()))
                     .reactionCount(reactionRepository.countByCommunityId(community.getId()))
                     .createdAt(community.getCreatedAt())
@@ -118,6 +119,7 @@ public class CommunityService {
                 .authorName(community.getAuthor().getName())
                 .authorId(community.getAuthor().getId())
                 .authorTier(community.getAuthor().getTier())
+                .authorProfile(community.getAuthor().getProfile())
                 .createdAt(community.getCreatedAt())
                 .updatedAt(community.getUpdatedAt())
                 .build();
@@ -231,6 +233,7 @@ public class CommunityService {
                     .authorName(community.getAuthor().getName())
                     .authorId(community.getAuthor().getId())
                     .authorTier(community.getAuthor().getTier())
+                    .authorProfile(community.getAuthor().getProfile())
                     .commentCount(commentRepository.countByCommunityId(community.getId()))
                     .reactionCount(reactionRepository.countByCommunityId(community.getId()))
                     .createdAt(community.getCreatedAt())
