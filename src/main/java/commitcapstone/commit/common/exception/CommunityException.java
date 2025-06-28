@@ -4,11 +4,13 @@ import commitcapstone.commit.common.code.type.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class OauthException extends RuntimeException {
+public class CommunityException extends RuntimeException {
     private final ErrorCode errorCode;
 
-    public OauthException(final ErrorCode errorCode) {
+    public CommunityException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
+
     }
+
 }

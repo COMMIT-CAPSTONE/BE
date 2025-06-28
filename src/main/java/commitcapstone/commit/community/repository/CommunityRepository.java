@@ -8,8 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface CommunityRepository extends JpaRepository<Community, Long> {
-    Page<Community> findByTitleContainingIgnoreCaseOrBodyContainingIgnoreCase(String keyword, String keyword2, Pageable pageable);
     Page<Community> findAll(Pageable pageable);
 
-
+    Page<Community> findByAuthorId(Long authorId, Pageable pageable);
 }

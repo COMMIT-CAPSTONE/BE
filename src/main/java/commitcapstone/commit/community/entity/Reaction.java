@@ -36,4 +36,10 @@ public class Reaction {
 
     @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Reaction(Community targetPost, User user, ReactionType reactionType) {
+        this.targetPost = targetPost;
+        this.user = user;
+        this.reactionType = reactionType;
+    }
 }

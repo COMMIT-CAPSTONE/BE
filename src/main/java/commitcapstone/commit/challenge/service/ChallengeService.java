@@ -1,5 +1,6 @@
 package commitcapstone.commit.challenge.service;
 
+import commitcapstone.commit.common.code.ChallengeErrorCode;
 import commitcapstone.commit.user.User;
 import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.challenge.dto.*;
@@ -10,7 +11,7 @@ import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.challenge.repository.ChallengeParticipantRepository;
 import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.challenge.utils.Utils;
-import commitcapstone.commit.common.code.ChallengeErrorCode;
+import commitcapstone.commit.common.code.CommunityErrorCode;
 import commitcapstone.commit.common.exception.ChallengeException;
 import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.PointType;

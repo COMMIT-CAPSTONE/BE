@@ -9,5 +9,5 @@ import lombok.*;
 @AllArgsConstructor
 public class CommunityPostRequest {
     private String title;
-    private String comntent;
+    private String content;
 }
