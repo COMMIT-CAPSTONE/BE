@@ -32,8 +32,8 @@ public class User {
     @Column(length = 50, unique = true)
     private String name;
 
-    @Column(name = "profile_image_url", columnDefinition = "TEXT")
-    private String profileImageUrl;
+    @Column(name = "profile")
+    private int profile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tier")

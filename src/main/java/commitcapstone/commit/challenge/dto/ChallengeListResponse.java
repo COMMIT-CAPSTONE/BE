@@ -2,6 +2,7 @@ package commitcapstone.commit.challenge.dto;
 
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.tier.TierType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

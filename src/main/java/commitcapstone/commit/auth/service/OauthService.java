@@ -17,6 +17,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Random;
+
 @Service
 @RequiredArgsConstructor
 public class OauthService {
@@ -73,8 +75,8 @@ public class OauthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail);
 
 
+        int profileNum = new Random().nextInt(4);
 
-        //
         String status;
         if (isUserCheck(provider , userEmail)) {
             status = "not_first_login";
@@ -85,6 +87,7 @@ public class OauthService {
                     .oauthId(userId)
                     .email(userEmail)
                     .name(utils.generateUniqueDoitName())
+                    .profile(profileNum)
                     .build();
 
             userRepository.save(user);

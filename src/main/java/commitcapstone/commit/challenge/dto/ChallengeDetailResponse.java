@@ -38,6 +38,7 @@ public class ChallengeDetailResponse {
     //사용자 정보
     private String userName;
     private TierType tier;
+    private int userProfile; // 사용자 프로필 이미지
 
     public static ChallengeDetailResponse from(Challenge challenge, User user, int participants) {
         return ChallengeDetailResponse.builder()
@@ -56,6 +57,7 @@ public class ChallengeDetailResponse {
 
                 .userName(user.getName())
                 .tier(user.getTier())
+                .userProfile(user.getProfile())
                 .build();
     }
 
