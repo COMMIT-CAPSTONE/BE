@@ -1,5 +1,6 @@
 package commitcapstone.commit.common.code;
 
+import commitcapstone.commit.common.code.type.ErrorCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

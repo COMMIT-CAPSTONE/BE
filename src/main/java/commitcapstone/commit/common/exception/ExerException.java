@@ -1,6 +1,6 @@
 package commitcapstone.commit.common.exception;
 
-import commitcapstone.commit.common.code.ErrorCode;
+import commitcapstone.commit.common.code.type.ErrorCode;
 import lombok.Getter;
 
 @Getter

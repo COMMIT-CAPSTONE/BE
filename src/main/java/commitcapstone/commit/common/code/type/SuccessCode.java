@@ -1,4 +1,4 @@
-package commitcapstone.commit.common.code;
+package commitcapstone.commit.common.code.type;
 
 import org.springframework.http.HttpStatus;
 
