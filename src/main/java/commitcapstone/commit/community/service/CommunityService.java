@@ -162,7 +162,7 @@ public class CommunityService {
         response.setReaction(reactionMap);
 
         // 댓글 목록
-        List<Comment> allComments = commentRepository.findAllByCommunityIdOrderByCreatedAtAsc(id);
+        List<Comment> allComments = commentRepository.findAllByCommunityIdAndIsDeletedFalseOrderByCreatedAtAsc(id);
         Map<Long, CommunityDetailComment> commentDtoMap = new java.util.HashMap<>();
         List<CommunityDetailComment> rootComments = new ArrayList<>();
 

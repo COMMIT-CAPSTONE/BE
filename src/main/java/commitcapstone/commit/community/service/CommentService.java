@@ -75,4 +75,30 @@ public class CommentService {
 
     }
 
+    public void deleteComment(String email, Long commentId) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommunityException(CommunityErrorCode.NOT_FOUND_COMMENT));
+        if (!comment.getAuthor().getEmail().equals(email)) {
+            throw new UserException(UserErrorCode.UNAUTHORIZED_USER);
+        }
+
+        comment.setDeleted(true);
+        comment.setContent("삭제된 댓글입니다.");
+        commentRepository.save(comment);
+    }
+
+    public void updateComment(String email, Long commentId, CommentRequest request) {
+
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new CommunityException(CommunityErrorCode.NOT_FOUND_COMMENT));
+
+        if (!comment.getAuthor().getEmail().equals(email)) {
+            throw new UserException(UserErrorCode.UNAUTHORIZED_USER);
+        }
+
+        comment.setContent(request.getContent());
+        commentRepository.save(comment);
+    }
+
 }

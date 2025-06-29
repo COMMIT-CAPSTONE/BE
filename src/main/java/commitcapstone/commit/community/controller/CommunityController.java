@@ -51,6 +51,22 @@ public class CommunityController {
         }
     }
 
+    @PutMapping("/comment/{id}")
+    public ResponseEntity<SuccessResponse<Void>> deleteComment(@AuthenticationPrincipal String email,
+                                                               @PathVariable Long id,
+                                                               @RequestBody CommentRequest request) {
+        commentService.updateComment(email, id, request);
+        return ResponseEntity.ok(new SuccessResponse<>("댓글 삭제 성공", null));
+    }
+
+    @DeleteMapping("/comment/{id}")
+    public ResponseEntity<SuccessResponse<Void>> deleteReply(@AuthenticationPrincipal String email,
+                                                              @PathVariable Long id) {
+        commentService.deleteComment(email, id);
+        return ResponseEntity.ok(new SuccessResponse<>("대댓글 삭제 성공", null));
+    }
+
+
     @PostMapping("/reaction/{id}")
     public ResponseEntity<SuccessResponse<Void>> addReaction(@AuthenticationPrincipal String email,
                                                              @PathVariable Long id

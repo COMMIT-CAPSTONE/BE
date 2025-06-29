@@ -15,5 +15,5 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     @Query("SELECT COUNT(c) FROM Comment c WHERE c.community.id = :communityId AND c.isDeleted = false")
     int countByCommunityId(@Param("communityId") Long communityId);
 
-    List<Comment> findAllByCommunityIdOrderByCreatedAtAsc(Long communityId);
+    List<Comment> findAllByCommunityIdAndIsDeletedFalseOrderByCreatedAtAsc(Long communityId);
 }
