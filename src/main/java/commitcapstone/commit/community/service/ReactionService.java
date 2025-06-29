@@ -47,12 +47,16 @@ public class ReactionService {
             return "리액션 추가 성공" + reactionRequest.getReactionType().name();
         } else if (existingReaction.getReactionType() != reactionRequest.getReactionType()) {             // 다른 타입으로 변경한 경우 → 업데이트
             existingReaction.setReactionType(reactionRequest.getReactionType());
+
+            community.setCommentCount(community.getReactionCount() + 1);
             reactionRepository.save(existingReaction);
 
             return "리액션 변경 성공" + reactionRequest.getReactionType().name();
         } else {            // 같은 타입이면 삭제
 
+            community.setCommentCount(community.getReactionCount() - 1);
             reactionRepository.delete(existingReaction);
+
             return "리액션 삭제 성공" + reactionRequest.getReactionType().name();
         }
     }

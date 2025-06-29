@@ -19,7 +19,6 @@ public class Community {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // 작성자
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private User author;
@@ -33,4 +32,9 @@ public class Community {
     private LocalDateTime updatedAt;
 
     private boolean isDeleted = false;
+
+    @Column(name = "view_count", nullable = false)
+    private int reactionCount = 0;
+    @Column(name = "comment_count", nullable = false)
+    private int commentCount = 0;
 }

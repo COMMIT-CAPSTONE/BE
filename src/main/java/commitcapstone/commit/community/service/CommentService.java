@@ -44,6 +44,8 @@ public class CommentService {
 
         commentRepository.save(comment);
 
+        community.setCommentCount(community.getCommentCount() + 1);
+
         CommentResponse response = new CommentResponse();
         response.setCommentId(comment.getId());
         return response;
@@ -69,6 +71,9 @@ public class CommentService {
 
         commentRepository.save(reply);
 
+
+        community.setCommentCount(community.getCommentCount() - 1);
+
         CommentResponse response = new CommentResponse();
         response.setCommentId(comment.getId());
         return response;
@@ -85,6 +90,10 @@ public class CommentService {
 
         comment.setDeleted(true);
         comment.setContent("삭제된 댓글입니다.");
+
+        Community community = communityRepository.findById(comment.getCommunity().getId())
+                .orElseThrow(() -> new CommunityException(CommunityErrorCode.NOT_FOUND_COMMUNITY));
+        community.setCommentCount(community.getCommentCount() - 1);
         commentRepository.save(comment);
     }
 

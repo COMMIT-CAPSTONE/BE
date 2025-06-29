@@ -13,25 +13,7 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
 
     Page<Community> findByAuthorId(Long authorId, Pageable pageable);
 
-    @Query(value = """
-    SELECT c.*, 
-           COALESCE(r.count, 0) AS reaction_count, 
-           COALESCE(cm.count, 0) AS comment_count
-    FROM community c
-    LEFT JOIN (
-        SELECT target_id, COUNT(*) AS count
-        FROM reaction
-        GROUP BY target_id
-    ) r ON c.id = r.target_id
-    LEFT JOIN (
-        SELECT community_id, COUNT(*) AS count
-        FROM comment
-        GROUP BY community_id
-    ) cm ON c.id = cm.community_id
-    WHERE c.is_deleted = false
-    ORDER BY (COALESCE(r.count, 0) + COALESCE(cm.count, 0)) DESC
-    LIMIT 10
-    """, nativeQuery = true)
-    List<Community> findTop10Popular();
+    @Query("SELECT c FROM Community c WHERE c.isDeleted = false ORDER BY (c.reactionCount + c.commentCount) DESC")
+    List<Community> findTop10PopularPosts(Pageable pageable);
 
 }

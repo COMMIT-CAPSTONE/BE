@@ -102,7 +102,7 @@ public class CommunityService {
             response.getPosts().add(postBase);
         }
 
-        List<Community> popularPosts = communityRepository.findTop10Popular();
+        List<Community> popularPosts = communityRepository.findTop10PopularPosts(PageRequest.of(0, 10));
         for (Community community : popularPosts) {
             CommunityPostBase postBase = CommunityPostBase.builder()
                     .id(community.getId())
