@@ -11,4 +11,5 @@ public class UserInfoResponse {
     private TierType tier;
     private int totalPoint;
     private int totalExerTime;
+    private int profile;
 }
