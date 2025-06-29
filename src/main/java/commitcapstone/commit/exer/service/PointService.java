@@ -1,9 +1,45 @@
 package commitcapstone.commit.exer.service;
 
+import commitcapstone.commit.common.code.UserErrorCode;
+import commitcapstone.commit.common.exception.UserException;
+import commitcapstone.commit.exer.dto.response.BuyResponse;
+import commitcapstone.commit.exer.entity.Point;
+import commitcapstone.commit.exer.entity.PointType;
+import commitcapstone.commit.exer.repository.PointRepository;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class PointService {
+
+    private final UserRepository userRepository;
+    private final PointRepository pointRepository;
+
+    public BuyResponse buyGoods(String email, int requiredPoint) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+
+        int userPoint = pointRepository.findTotalPointByUserId(user.getId());
+        if (userPoint >= requiredPoint) {
+            Point point = Point.builder()
+                    .user(user)
+                    .point(-requiredPoint) // 포인트 차감
+                    .type(PointType.BUY)
+                    .build();
+            pointRepository.save(point);
+
+            int totalPoint = pointRepository.findTotalPointByUserId(user.getId());
+            return BuyResponse.builder()
+                    .totalPoint(totalPoint)
+                    .usePoint(requiredPoint)
+                    .build();
+        } else {
+            throw new UserException(UserErrorCode.NOT_ENOUGH_POINT);
+        }
+    }
 
 
     public int PointCalculate(long min) {
