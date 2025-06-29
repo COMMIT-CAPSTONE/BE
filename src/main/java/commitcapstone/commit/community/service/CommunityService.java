@@ -52,6 +52,7 @@ public class CommunityService {
         communityRepository.save(community);
 
         return CommunityPostResponse.builder()
+                .id(community.getId())
                 .title(request.getTitle())
                 .content(request.getContent())
                 .authorName(user.getName())

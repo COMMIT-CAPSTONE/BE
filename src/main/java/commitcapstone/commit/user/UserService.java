@@ -54,4 +54,16 @@ public class UserService {
         userRepository.save(user);
     }
 
+    public void updateUserProfile(String email, int newProfile) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+
+        if (newProfile < 0 || newProfile > 4) {
+            throw new UserException(UserErrorCode.INVALID_PROFILE);
+        }
+
+        user.setProfile(newProfile);
+        userRepository.save(user);
+    }
+
 }

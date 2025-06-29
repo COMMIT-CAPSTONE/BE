@@ -21,8 +21,14 @@ public class UserContoller {
     }
 
     @PostMapping("/name")
-    public ResponseEntity<SuccessResponse<?>> updateUserName(@AuthenticationPrincipal String email, @RequestParam String newName) {
-        userService.updateUserName(email, newName);
+    public ResponseEntity<SuccessResponse<?>> updateUserName(@AuthenticationPrincipal String email, @RequestParam String name) {
+        userService.updateUserName(email, name);
         return ResponseEntity.ok(new SuccessResponse<>("유저 이름 변경 성공", null));
+    }
+
+    @PostMapping("/profile")
+    public ResponseEntity<SuccessResponse<?>> updateUserProfile(@AuthenticationPrincipal String email, @RequestParam int newProfile) {
+        userService.updateUserProfile(email, newProfile);
+        return ResponseEntity.ok(new SuccessResponse<>("유저 프로필 변경 성공", null));
     }
 }
