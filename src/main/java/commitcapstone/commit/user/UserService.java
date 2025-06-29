@@ -29,7 +29,7 @@ public class UserService {
         TierType tier = user.getTier();
         int totalPoint = pointRepository.findTotalPointByUserId(user.getId());
         int totalExerTime = workRepository.getTotalDuration(user.getId());
-        return new UserInfoResponse(username, tier, totalPoint, totalExerTime);
+        return new UserInfoResponse(username, tier, totalPoint, totalExerTime, user.getProfile());
 
 
     }
