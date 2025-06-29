@@ -4,6 +4,7 @@ import commitcapstone.commit.community.entity.CommunitySortType;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,5 +14,5 @@ public class CommunityPostsResponse {
     private String keyword;
     private CommunitySortType sortType;
 
-    List<CommunityPostBase> posts;
+    List<CommunityPostBase> posts = new ArrayList<>();
 }
