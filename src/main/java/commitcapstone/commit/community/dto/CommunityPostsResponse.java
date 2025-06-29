@@ -15,4 +15,5 @@ public class CommunityPostsResponse {
     private CommunitySortType sortType;
 
     List<CommunityPostBase> posts = new ArrayList<>();
+    List<CommunityPostBase> popularPosts = new ArrayList<>();
 }

@@ -64,6 +64,9 @@ public class CommunityService {
 
 
     public CommunityPostsResponse getCommunityPosts(int page, int size, String keyword, CommunitySortType sort) {
+
+
+
         Sort sortOption = switch (sort) {
             case LATEST -> Sort.by(Sort.Direction.DESC, "createdAt");
             case COMMENT -> Sort.by(Sort.Direction.DESC, "commentCount");
@@ -97,6 +100,25 @@ public class CommunityService {
                     .build();
 
             response.getPosts().add(postBase);
+        }
+
+        List<Community> popularPosts = communityRepository.findTop10Popular();
+        for (Community community : popularPosts) {
+            CommunityPostBase postBase = CommunityPostBase.builder()
+                    .id(community.getId())
+                    .title(community.getTitle())
+                    .content(community.getContent())
+                    .authorName(community.getAuthor().getName())
+                    .authorId(community.getAuthor().getId())
+                    .authorTier(community.getAuthor().getTier())
+                    .authorProfile(community.getAuthor().getProfile())
+                    .commentCount(commentRepository.countByCommunityId(community.getId()))
+                    .reactionCount(reactionRepository.countByCommunityId(community.getId()))
+                    .createdAt(community.getCreatedAt())
+                    .updatedAt(community.getUpdatedAt())
+                    .build();
+
+            response.getPopularPosts().add(postBase);
         }
 
         response.setKeyword(keyword);
@@ -247,6 +269,7 @@ public class CommunityService {
 
         return response;
     }
+
 
 }
 
