@@ -158,12 +158,14 @@ public class CommunityService {
         for (ReactionType type : ReactionType.values()) {
             reactionMap.put(type, 0);
         }
-        List<Object[]> ReactionGroup = reactionRepository.countGroupedByType(id);
-        for (Object[] obj : ReactionGroup) {
+        List<Object[]> reactionGroup = reactionRepository.countGroupedByType(id);
+        for (Object[] obj : reactionGroup) {
             ReactionType reactionType = (ReactionType) obj[0];
             Integer count = ((Number) obj[1]).intValue();
             reactionMap.put(reactionType, count);
         }
+
+        response.setReaction(reactionMap);
 
         // 댓글 목록
         List<Comment> allComments = commentRepository.findAllByCommunityIdAndIsDeletedFalseOrderByCreatedAtAsc(id);
