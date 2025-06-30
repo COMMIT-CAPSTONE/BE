@@ -16,4 +16,6 @@ public interface CommunityRepository extends JpaRepository<Community, Long> {
     @Query("SELECT c FROM Community c WHERE c.isDeleted = false ORDER BY (c.reactionCount + c.commentCount) DESC")
     List<Community> findTop10PopularPosts(Pageable pageable);
 
+    Page<Community> findByTitleContainingOrContentContaining(String keyword1, String keyword2, Pageable pageable);
 }
+

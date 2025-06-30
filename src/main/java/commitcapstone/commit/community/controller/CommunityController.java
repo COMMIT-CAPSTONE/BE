@@ -29,7 +29,7 @@ public class CommunityController {
 
 
     @GetMapping("/post")
-    public ResponseEntity<SuccessResponse<CommunityPostsResponse>> getCommunityPosts(@RequestParam(defaultValue = "") String keyWord,
+    public ResponseEntity<SuccessResponse<CommunityPostsResponse>> getCommunityPosts(@RequestParam(defaultValue = "") String keyword,
                                                                                      @RequestParam(defaultValue = "LATEST") CommunitySortType sort, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         CommunityPostsResponse response = communityService.getCommunityPosts(page, size, keyWord, sort);
 

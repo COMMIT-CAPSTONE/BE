@@ -80,7 +80,7 @@ public class CommunityService {
         if (keyword == "") {
             list = communityRepository.findAll(pageable);
         } else {
-            list = communityRepository.findAll(pageable);
+            list = communityRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
         }
 
         CommunityPostsResponse response = new CommunityPostsResponse();
