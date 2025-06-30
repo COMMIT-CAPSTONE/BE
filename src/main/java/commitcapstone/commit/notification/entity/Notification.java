@@ -32,6 +32,7 @@ public class Notification {
     private String content;
 
     @Column(length = 50)
+    @Enumerated(EnumType.STRING)
     private NotificationType type;
 
     @Column(name = "is_read", nullable = false)
