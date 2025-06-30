@@ -78,9 +78,9 @@ public class CommunityService {
 
         Page<Community> list;
         if (keyword == "") {
-            list = communityRepository.findAll(pageable);
+            list = communityRepository.findAllByIsDeletedFalse(pageable);
         } else {
-            list = communityRepository.findByTitleContainingOrContentContaining(keyword, keyword, pageable);
+            list = communityRepository.findByTitleContainingAndIsDeletedFalseOrContentContainingAndIsDeletedFalse(keyword, keyword, pageable);
         }
 
         CommunityPostsResponse response = new CommunityPostsResponse();
@@ -212,7 +212,8 @@ public class CommunityService {
             throw new CommunityException(CommunityErrorCode.UNAUTHORIZED);
         }
 
-        communityRepository.delete(community);
+        community.setDeleted(true);
+        communityRepository.save(community);
     }
 
 
@@ -250,7 +251,7 @@ public class CommunityService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        Page<Community> communityPage = communityRepository.findByAuthorId(user.getId(), pageable);
+        Page<Community> communityPage = communityRepository.findByAuthorIdAndIsDeletedFalse(user.getId(), pageable);
 
         CommunityPostsResponse response = new CommunityPostsResponse();
 
