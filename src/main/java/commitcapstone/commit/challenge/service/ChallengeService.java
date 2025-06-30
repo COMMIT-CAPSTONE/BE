@@ -139,7 +139,7 @@ public class ChallengeService {
 
             Point point = Point.builder()
                     .user(user)
-                    .point(request.getBetPoint())
+                    .point(-request.getBetPoint())
                     .type(PointType.CHALLENGE_MINUS)
                     .earnedAt(now)
                     .build();
@@ -271,7 +271,7 @@ public class ChallengeService {
         LocalDateTime now = LocalDateTime.now();
         Point point = Point.builder()
                 .user(user)
-                .point(challenge.getBetPoint())
+                .point(-challenge.getBetPoint())
                 .type(PointType.CHALLENGE_MINUS)
                 .earnedAt(now)
                 .build();
