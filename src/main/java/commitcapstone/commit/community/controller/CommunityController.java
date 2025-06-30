@@ -75,7 +75,7 @@ public class CommunityController {
         return ResponseEntity.ok(new SuccessResponse<>(msg, null));
     }
 
-    @GetMapping("/post{id}")
+    @GetMapping("/post/{id}")
     public ResponseEntity<SuccessResponse<CommunityDetailResponse>> getCommunityPostDetauil(@AuthenticationPrincipal String email,
                                                                                            @PathVariable Long id) {
         CommunityDetailResponse response = communityService.getCommunityPostDetail(email, id);
