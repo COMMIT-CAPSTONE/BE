@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 
@@ -152,14 +153,17 @@ public class CommunityService {
                 .map(reaction -> reaction.getReactionType())
                 .orElse(null));
 
-        Map<ReactionType, Integer> reactionMap = Map.of();
+        Map<ReactionType, Integer> reactionMap = new EnumMap<>(ReactionType.class);
+
+        for (ReactionType type : ReactionType.values()) {
+            reactionMap.put(type, 0);
+        }
         List<Object[]> ReactionGroup = reactionRepository.countGroupedByType(id);
         for (Object[] obj : ReactionGroup) {
             ReactionType reactionType = (ReactionType) obj[0];
             Integer count = ((Number) obj[1]).intValue();
             reactionMap.put(reactionType, count);
         }
-        response.setReaction(reactionMap);
 
         // 댓글 목록
         List<Comment> allComments = commentRepository.findAllByCommunityIdAndIsDeletedFalseOrderByCreatedAtAsc(id);
