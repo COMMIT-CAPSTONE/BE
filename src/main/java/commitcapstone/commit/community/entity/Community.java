@@ -34,7 +34,9 @@ public class Community {
     private boolean isDeleted = false;
 
     @Column(name = "view_count", nullable = false)
+    @Builder.Default
     private int reactionCount = 0;
     @Column(name = "comment_count", nullable = false)
+    @Builder.Default
     private int commentCount = 0;
 }
