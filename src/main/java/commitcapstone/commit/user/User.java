@@ -1,6 +1,5 @@
 package commitcapstone.commit.user;
 
-import commitcapstone.commit.auth.entity.Gym;
 import commitcapstone.commit.tier.TierType;
 import jakarta.persistence.*;
 import lombok.*;
@@ -43,9 +42,6 @@ public class User {
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Gym gym;
 
 
 }
