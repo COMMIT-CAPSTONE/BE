@@ -133,6 +133,9 @@ public class CommunityService {
         Community community = communityRepository.findById(id)
                 .orElseThrow(() -> new CommunityException(CommunityErrorCode.NOT_FOUND_COMMUNITY));
 
+        if (community.isDeleted()) {
+            throw new CommunityException(CommunityErrorCode.DELETED_POST);
+        }
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
