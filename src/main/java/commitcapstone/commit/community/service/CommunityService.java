@@ -94,8 +94,8 @@ public class CommunityService {
                     .authorId(community.getAuthor().getId())
                     .authorTier(community.getAuthor().getTier())
                     .authorProfile(community.getAuthor().getProfile())
-                    .commentCount(commentRepository.countByCommunityId(community.getId()))
-                    .reactionCount(reactionRepository.countByCommunityId(community.getId()))
+                    .commentCount(community.getCommentCount())
+                    .reactionCount(community.getReactionCount())
                     .createdAt(community.getCreatedAt())
                     .updatedAt(community.getUpdatedAt())
                     .build();
@@ -113,8 +113,8 @@ public class CommunityService {
                     .authorId(community.getAuthor().getId())
                     .authorTier(community.getAuthor().getTier())
                     .authorProfile(community.getAuthor().getProfile())
-                    .commentCount(commentRepository.countByCommunityId(community.getId()))
-                    .reactionCount(reactionRepository.countByCommunityId(community.getId()))
+                    .commentCount(community.getCommentCount())
+                    .reactionCount(community.getReactionCount())
                     .createdAt(community.getCreatedAt())
                     .updatedAt(community.getUpdatedAt())
                     .build();
@@ -178,6 +178,7 @@ public class CommunityService {
         for (Comment c : allComments) {
             CommunityDetailComment dto = CommunityDetailComment.builder()
                     .commentId(c.getId())
+                    .authorProfile(c.getAuthor().getProfile())
                     .authorName(c.getAuthor().getName())
                     .authorId(c.getAuthor().getId())
                     .authorTier(c.getAuthor().getTier())
@@ -267,8 +268,8 @@ public class CommunityService {
                     .authorId(community.getAuthor().getId())
                     .authorTier(community.getAuthor().getTier())
                     .authorProfile(community.getAuthor().getProfile())
-                    .commentCount(commentRepository.countByCommunityId(community.getId()))
-                    .reactionCount(reactionRepository.countByCommunityId(community.getId()))
+                    .commentCount(community.getCommentCount())
+                    .reactionCount(community.getReactionCount())
                     .createdAt(community.getCreatedAt())
                     .updatedAt(community.getUpdatedAt())
                     .build();

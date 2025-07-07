@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 public class CommunityDetailComment {
     private Long commentId;
+    private int authorProfile;
     private String authorName;
     private Long authorId;
     private TierType authorTier;
