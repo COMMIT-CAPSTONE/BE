@@ -102,16 +102,17 @@ WHERE w.user.id = :userId
 
     //최대 입장 시간 (분) = MAX(운동 시간)
     @Query("""
-    SELECT MAX(w.duration)
-    FROM Work w
-    WHERE w.user.id = :userId
-      AND w.workDate BETWEEN :startDate AND :endDate
+SELECT COALESCE(MAX(w.duration), 0)
+FROM Work w
+WHERE w.user.id = :userId
+  AND w.workDate BETWEEN :startDate AND :endDate
 """)
     Integer getMaxWorkoutDurationByUser(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
     );
+
 
 
 }
