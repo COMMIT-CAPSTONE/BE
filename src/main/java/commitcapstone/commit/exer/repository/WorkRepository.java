@@ -89,10 +89,10 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
 
     //평균 입장 시간 (분) = (운동 시간들의 총합) ÷ (입장 횟수)
     @Query("""
-    SELECT COALESCE(SUM(w.duration), 0) / COUNT(w)
-    FROM Work w
-    WHERE w.user.id = :userId
-      AND w.workDate BETWEEN :startDate AND :endDate
+SELECT CASE WHEN COUNT(w) = 0 THEN 0 ELSE SUM(w.duration) * 1.0 / COUNT(w) END
+FROM Work w
+WHERE w.user.id = :userId
+  AND w.workDate BETWEEN :startDate AND :endDate
 """)
     Double getAverageWorkoutDurationByUser(
             @Param("userId") Long userId,
