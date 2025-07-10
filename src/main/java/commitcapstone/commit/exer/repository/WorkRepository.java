@@ -26,7 +26,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * return : 특정 사용자의 일일 운동 시간을 모두 더해 보내줌
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :today")
-    int getTodayDuration(@Param("user") User user, @Param("today") LocalDate today);
+    Integer getTodayDuration(@Param("user") User user, @Param("today") LocalDate today);
 
     /*
      * 사용자의 총 운동 시간을 구하는 쿼리
@@ -34,7 +34,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * return : 특정 사용자의 총 운동 시간을 모두 더해 보내줌
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user.id = :userId")
-    int getTotalDuration(@Param("userId") Long userId);
+    Integer getTotalDuration(@Param("userId") Long userId);
 
 
     /*
@@ -45,7 +45,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * @return : 특정 기간 사이의 사용자의 운동 시간 총 합을 반환함
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user.id = :userId AND w.workDate BETWEEN :startDate AND :endDate")
-    int getPeriodTotalTimeByUser(@Param("userId") Long userId,
+    Integer getPeriodTotalTimeByUser(@Param("userId") Long userId,
                                  @Param("startDate") LocalDate startDate,
                                  @Param("endDate") LocalDate endDate);
 
@@ -94,7 +94,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     WHERE w.user.id = :userId
       AND w.workDate BETWEEN :startDate AND :endDate
 """)
-    int getAverageWorkoutDurationByUser(
+    Integer getAverageWorkoutDurationByUser(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
@@ -107,7 +107,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     WHERE w.user.id = :userId
       AND w.workDate BETWEEN :startDate AND :endDate
 """)
-    int getMaxWorkoutDurationByUser(
+    Integer getMaxWorkoutDurationByUser(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
