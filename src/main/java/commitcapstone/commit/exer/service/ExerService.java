@@ -108,7 +108,7 @@ public class ExerService {
 
         List<ExerWeekStat> weekStats = getFullDailyStats(user, weekStartDate, weekEndDate);
 
-        int weeklyDailyAverageWorkoutDuration = workRepository.getAverageWorkoutDurationByUser(user.getId(), weekStartDate, weekEndDate); // 이번 주 평균 운동 시간 평균 입장 시간 (분) = (운동 시간들의 총합) ÷ (입장 횟수)
+        int weeklyDailyAverageWorkoutDuration = (int) Math.round(workRepository.getAverageWorkoutDurationByUser(user.getId(), weekStartDate, weekEndDate));
         int weeklyMaxWorkoutDuration = workRepository.getMaxWorkoutDurationByUser(user.getId(), weekStartDate, weekEndDate); // 이번 주 최대 운동 시간
 
         return new UserExerTimeStatResponse(

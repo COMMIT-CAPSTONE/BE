@@ -94,7 +94,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     WHERE w.user.id = :userId
       AND w.workDate BETWEEN :startDate AND :endDate
 """)
-    Integer getAverageWorkoutDurationByUser(
+    Double getAverageWorkoutDurationByUser(
             @Param("userId") Long userId,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
