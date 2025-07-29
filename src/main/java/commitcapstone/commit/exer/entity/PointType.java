@@ -5,6 +5,7 @@ public enum PointType {
     CHALLENGE_MINUS,
     EXER_ADD,
     EXER_MINUS, // 사용 x
+    BUY
 
 
 }

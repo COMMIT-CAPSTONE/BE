@@ -1,6 +1,6 @@
 package commitcapstone.commit.challenge.entity;
 
-import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 

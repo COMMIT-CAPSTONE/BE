@@ -1,18 +1,20 @@
 package commitcapstone.commit.notification.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.entity.Challenge;
+import commitcapstone.commit.common.code.UserErrorCode;
+import commitcapstone.commit.common.exception.UserException;
+import commitcapstone.commit.notification.dto.NotificationBase;
+import commitcapstone.commit.notification.dto.NotificationUnReadResponse;
+import commitcapstone.commit.notification.dto.SystemNotificationRequest;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.notification.NotificationRepository;
 import commitcapstone.commit.notification.entity.Notification;
 import commitcapstone.commit.notification.entity.NotificationType;
 import commitcapstone.commit.notification.dto.NotificationViewResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,7 +44,36 @@ public class NotificationService {
 
         // 읽지 않은 알림 먼저(createdAt 오름차순), 그 다음 읽은 알림(createdAt 오름차순)
         List<Notification> notifications = notificationRepository.findByUserIdOrderByIsReadAscCreatedAtAsc(user.getId());
-        return new NotificationViewResponse(notifications);
+        List<NotificationBase> list = new java.util.ArrayList<>();
+        for (Notification notification : notifications) {
+            list.add(NotificationBase.builder()
+                    .title(notification.getTitle())
+                    .conetnt(notification.getContent())
+                    .date(notification.getCreatedAt())
+                    .type(notification.getType())
+                    .build());
+        }
+        return new NotificationViewResponse(list);
     }
 
+    public NotificationUnReadResponse getUnread(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        int unreadCount = notificationRepository.countByUserIdAndIsReadFalse(user.getId());
+        return new NotificationUnReadResponse(unreadCount);
+    }
+
+    public void sendSystemNotification(SystemNotificationRequest request) {
+        List<User> users = userRepository.findAll();
+        for (User user : users) {
+            Notification notification = Notification.builder()
+                    .user(user)
+                    .title(request.getTitle())
+                    .content(request.getContent())
+                    .type(NotificationType.SYSTEM)
+                    .isRead(false)
+                    .build();
+            notificationRepository.save(notification);
+        }
+    }
 }

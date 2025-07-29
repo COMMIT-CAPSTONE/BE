@@ -1,7 +1,5 @@
 package commitcapstone.commit.challenge.dto;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

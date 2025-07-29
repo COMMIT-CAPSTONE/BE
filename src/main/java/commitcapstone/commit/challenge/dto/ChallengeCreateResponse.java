@@ -11,6 +11,7 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 public class ChallengeCreateResponse {
+
     private String challengeTitle;
     private String challengeDescription;
     private ChallengeType challengeType;

@@ -1,8 +1,6 @@
 package commitcapstone.commit.exer.repository;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.challenge.entity.Challenge;
-import commitcapstone.commit.challenge.entity.ChallengeParticipant;
+import commitcapstone.commit.user.User;
 import commitcapstone.commit.exer.dto.response.ExerWeekStat;
 import commitcapstone.commit.exer.entity.Work;
 
@@ -28,7 +26,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * return : 특정 사용자의 일일 운동 시간을 모두 더해 보내줌
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user = :user AND w.workDate = :today")
-    int getTodayDuration(@Param("user") User user, @Param("today") LocalDate today);
+    Integer getTodayDuration(@Param("user") User user, @Param("today") LocalDate today);
 
     /*
      * 사용자의 총 운동 시간을 구하는 쿼리
@@ -36,7 +34,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * return : 특정 사용자의 총 운동 시간을 모두 더해 보내줌
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user.id = :userId")
-    int getTotalDuration(@Param("userId") Long userId);
+    Integer getTotalDuration(@Param("userId") Long userId);
 
 
     /*
@@ -47,7 +45,7 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
      * @return : 특정 기간 사이의 사용자의 운동 시간 총 합을 반환함
      * */
     @Query("SELECT COALESCE(SUM(w.duration), 0) FROM Work w WHERE w.user.id = :userId AND w.workDate BETWEEN :startDate AND :endDate")
-    int getPeriodTotalTimeByUser(@Param("userId") Long userId,
+    Integer getPeriodTotalTimeByUser(@Param("userId") Long userId,
                                  @Param("startDate") LocalDate startDate,
                                  @Param("endDate") LocalDate endDate);
 
@@ -88,5 +86,34 @@ public interface WorkRepository extends JpaRepository<Work, Long> {
     Page<BaseRankDto> findExerTimeRankBetween(@Param("start") LocalDate start,
                                               @Param("end") LocalDate end,
                                               Pageable pageable);
+
+    //평균 입장 시간 (분) = (운동 시간들의 총합) ÷ (입장 횟수)
+    @Query("""
+SELECT CASE WHEN COUNT(w) = 0 THEN 0 ELSE SUM(w.duration) * 1.0 / COUNT(w) END
+FROM Work w
+WHERE w.user.id = :userId
+  AND w.workDate BETWEEN :startDate AND :endDate
+""")
+    Double getAverageWorkoutDurationByUser(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+    //최대 입장 시간 (분) = MAX(운동 시간)
+    @Query("""
+SELECT COALESCE(MAX(w.duration), 0)
+FROM Work w
+WHERE w.user.id = :userId
+  AND w.workDate BETWEEN :startDate AND :endDate
+""")
+    Integer getMaxWorkoutDurationByUser(
+            @Param("userId") Long userId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
+
+
+
 }
 

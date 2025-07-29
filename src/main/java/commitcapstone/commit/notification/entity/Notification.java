@@ -1,6 +1,6 @@
 package commitcapstone.commit.notification.entity;
 
-import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,9 +32,11 @@ public class Notification {
     private String content;
 
     @Column(length = 50)
+    @Enumerated(EnumType.STRING)
     private NotificationType type;
 
     @Column(name = "is_read", nullable = false)
+    @Builder.Default
     private boolean isRead = false;
 
     @Column(name = "read_at")

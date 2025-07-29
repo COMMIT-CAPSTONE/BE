@@ -1,7 +1,8 @@
 package commitcapstone.commit.challenge.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.common.code.ChallengeErrorCode;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 import commitcapstone.commit.challenge.dto.*;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeParticipant;
@@ -10,7 +11,7 @@ import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.challenge.repository.ChallengeParticipantRepository;
 import commitcapstone.commit.challenge.repository.ChallengeRepository;
 import commitcapstone.commit.challenge.utils.Utils;
-import commitcapstone.commit.common.code.ChallengeErrorCode;
+import commitcapstone.commit.common.code.CommunityErrorCode;
 import commitcapstone.commit.common.exception.ChallengeException;
 import commitcapstone.commit.exer.entity.Point;
 import commitcapstone.commit.exer.entity.PointType;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class ChallengeService {
@@ -60,6 +62,7 @@ public class ChallengeService {
 
         @Transactional
         public ChallengeCreateResponse saveChallenge(String email, ChallengeCreateRequest request) {
+
             User user = userRepository.findByEmail(email)
                     .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
 
@@ -114,6 +117,8 @@ public class ChallengeService {
             }
 
 
+            int challengeImgNum = new Random().nextInt(6);
+
             LocalDateTime now = LocalDateTime.now();
             Challenge challenge = Challenge.builder()
                     .owner(user)
@@ -121,6 +126,7 @@ public class ChallengeService {
                     .description(request.getChallengeDescription())
                     .type(request.getChallengeType())
                     .betPoint(request.getBetPoint())
+                    .ChallengeImg(challengeImgNum)
                     .targetMinutes(request.getTargetMinutes())
                     .startDate(request.getStartDate())
                     .endDate(request.getEndDate())
@@ -133,7 +139,7 @@ public class ChallengeService {
 
             Point point = Point.builder()
                     .user(user)
-                    .point(request.getBetPoint())
+                    .point(-request.getBetPoint())
                     .type(PointType.CHALLENGE_MINUS)
                     .earnedAt(now)
                     .build();
@@ -163,21 +169,21 @@ public class ChallengeService {
         Sort sort = utils.getSort(sortType);
         Pageable pageable = PageRequest.of(page, size, sort);
 
-
+        LocalDate now = LocalDate.now();
         if (keyword == null || keyword.trim().isEmpty()) {
             if (type.equals(ChallengeType.ALL)) {
-                return challengeRepository.findAll(pageable)
+                return challengeRepository.findByStartDateAfter(now, pageable)
                         .map(ChallengeListResponse::from);
             } else {
-                return challengeRepository.findByType(pageable, type)
+                return challengeRepository.findByType(now, type, pageable)
                         .map(ChallengeListResponse::from);
             }
         } else {
             if (type.equals(ChallengeType.ALL)) {
-                return challengeRepository.findByTitle(keyword, pageable)
+                return challengeRepository.findByTitle(keyword, now, pageable)
                         .map(ChallengeListResponse::from);
             } else {
-                return challengeRepository.findByTypeAndTitle(type, keyword, pageable)
+                return challengeRepository.findByTypeAndTitle(type, keyword, now, pageable)
                         .map(ChallengeListResponse::from);
             }
         }
@@ -207,9 +213,10 @@ public class ChallengeService {
         LocalDate start = challenge.getStartDate();
         LocalDate end = challenge.getEndDate();
         LocalDate today = LocalDate.now();
-        int achieve = workRepository.getPeriodTotalTimeByUser(user.getId(), start, end);
+
+        int totalAcheieve = workRepository.getPeriodTotalTimeByUser(user.getId(), start, end);
         if (challenge.getType() == ChallengeType.TOTAL) {
-            response.setTotalAcheiveMinutes(achieve);
+            response.setTotalAcheiveMinutes(totalAcheieve);
         }
 
         for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
@@ -217,7 +224,7 @@ public class ChallengeService {
             boolean isToday = date.equals(today);
 
             ChallengeMyProgress progress;
-
+            int achieve = workRepository.getTodayDuration(user, date);
             if (challenge.getType() == ChallengeType.DAILY) {
                 progress = ChallengeMyProgress.dailyFrom(date, challenge.getTargetMinutes(), achieve, isToday);
             } else if (challenge.getType() == ChallengeType.TOTAL) {
@@ -264,7 +271,7 @@ public class ChallengeService {
         LocalDateTime now = LocalDateTime.now();
         Point point = Point.builder()
                 .user(user)
-                .point(challenge.getBetPoint())
+                .point(-challenge.getBetPoint())
                 .type(PointType.CHALLENGE_MINUS)
                 .earnedAt(now)
                 .build();

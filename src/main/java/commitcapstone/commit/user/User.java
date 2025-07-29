@@ -1,9 +1,8 @@
-package commitcapstone.commit.auth.entity;
+package commitcapstone.commit.user;
 
 import commitcapstone.commit.tier.TierType;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @Table(name = "users")
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,17 +31,17 @@ public class User {
     @Column(length = 50, unique = true)
     private String name;
 
-    @Column(name = "profile_image_url", columnDefinition = "TEXT")
-    private String profileImageUrl;
+    @Column(name = "profile")
+    private int profile;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tier")
+    @Builder.Default
     private TierType tier = TierType.헬린이;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     @CreationTimestamp
     private LocalDateTime createdAt;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private Gym gym;
+
 }

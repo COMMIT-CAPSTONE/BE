@@ -6,26 +6,28 @@ import commitcapstone.commit.auth.dto.oauth.OauthUserInfo;
 import commitcapstone.commit.auth.dto.oauth.TokenRequest;
 import commitcapstone.commit.auth.dto.request.RefreshTokenRequest;
 import commitcapstone.commit.auth.dto.response.LoginResponse;
-import commitcapstone.commit.auth.repository.UserRepository;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
+import commitcapstone.commit.auth.utils.AuthUtils;
 import commitcapstone.commit.common.code.OauthErrorCode;
 import commitcapstone.commit.common.exception.OauthException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import java.util.Random;
+
 @Service
+@RequiredArgsConstructor
 public class OauthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final RedisService redisService;
+    private final AuthUtils utils;
 
-    public OauthService(UserRepository userRepository, JwtTokenProvider jwtTokenProvider, RedisService redisService) {
-        this.userRepository = userRepository;
-        this.jwtTokenProvider = jwtTokenProvider;
-        this.redisService = redisService;
-    }
 
     /**
      * 로그인 처리 Service 코드
@@ -73,12 +75,22 @@ public class OauthService {
         String refreshToken = jwtTokenProvider.createRefreshToken(userEmail);
 
 
-        //
+        int profileNum = new Random().nextInt(4);
+
         String status;
         if (isUserCheck(provider , userEmail)) {
             status = "not_first_login";
         } else {
             status = "first_login";
+            User user = User.builder()
+                    .oauthProvider(provider)
+                    .oauthId(userId)
+                    .email(userEmail)
+                    .name(utils.generateUniqueDoitName())
+                    .profile(profileNum)
+                    .build();
+
+            userRepository.save(user);
         }
 
         redisService.save("refreshToken:" + userEmail, refreshToken, 604800000); // 7일 저장

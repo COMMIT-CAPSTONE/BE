@@ -32,4 +32,6 @@ public class SwaggerConfig   {
                 .components(new Components().addSecuritySchemes("Bearer Token", apiKey))
                 .addSecurityItem(securityRequirement);
     }
+
+
 }

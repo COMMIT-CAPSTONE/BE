@@ -1,10 +1,7 @@
 package commitcapstone.commit.exer.service;
 
-import commitcapstone.commit.auth.entity.User;
-import commitcapstone.commit.auth.repository.UserRepository;
-import commitcapstone.commit.challenge.repository.ChallengeRepository;
-import commitcapstone.commit.common.code.ExerErrorCode;
-import commitcapstone.commit.common.exception.ExerException;
+import commitcapstone.commit.user.User;
+import commitcapstone.commit.user.UserRepository;
 
 import commitcapstone.commit.exer.dto.request.CheckOutRequest;
 import commitcapstone.commit.exer.dto.response.*;
@@ -111,14 +108,25 @@ public class ExerService {
 
         List<ExerWeekStat> weekStats = getFullDailyStats(user, weekStartDate, weekEndDate);
 
+        int weeklyDailyAverageWorkoutDuration = (int) Math.round(workRepository.getAverageWorkoutDurationByUser(user.getId(), weekStartDate, weekEndDate));
+        int weeklyMaxWorkoutDuration = workRepository.getMaxWorkoutDurationByUser(user.getId(), weekStartDate, weekEndDate); // 이번 주 최대 운동 시간
+
         return new UserExerTimeStatResponse(
                 new ExerTimeBasic(ExerStatType.USER_TODAY, todayTime),
                 new ExerTimeBasic(ExerStatType.USER_TOTAL, totalTime),
-                new ExerTimeWithAvg(ExerStatType.TODAY, todayTime, todayAvg),
-                new ExerTimeWithAvg(ExerStatType.WEEK, weekTime, weekAvg),
-                new ExerTimeWithAvg(ExerStatType.MONTH, monthTime, monthAvg),
+                new ExerTimeWithAvg(today, today, ExerStatType.TODAY, todayTime, todayAvg),
+                new ExerTimeWithAvg(weekStartDate, weekEndDate, ExerStatType.WEEK, weekTime, weekAvg),
+                new ExerTimeWithAvg(monthStartDate, monthEndDate, ExerStatType.MONTH, monthTime, monthAvg),
                 weekStats,
-                LocalDate.now()
+                LocalDate.now(),
+                weeklyDailyAverageWorkoutDuration,
+                weeklyMaxWorkoutDuration
+
+
+
+
+
+
         );
 
     }public List<ExerWeekStat> getFullDailyStats(User user, LocalDate start, LocalDate end) {

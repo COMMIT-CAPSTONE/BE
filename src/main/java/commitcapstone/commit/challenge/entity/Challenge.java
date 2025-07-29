@@ -1,6 +1,6 @@
 package commitcapstone.commit.challenge.entity;
 
-import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.user.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -36,6 +36,9 @@ public class Challenge {
     @Column(nullable = false)
     private ChallengeType type;
 
+    @Column(name = "challenge_img", nullable = false)
+    private int ChallengeImg;
+
     @Column(name = "bet_point", nullable = false)
     private int betPoint;
 
@@ -49,9 +52,11 @@ public class Challenge {
     private LocalDate endDate;
 
     @Column(name = "created_at", nullable = false, updatable = false)
+    @Builder.Default
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(name = "finished", nullable = false)
+    @Builder.Default
     private boolean finished = false;
 
 }

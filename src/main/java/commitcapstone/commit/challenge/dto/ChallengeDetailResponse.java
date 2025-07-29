@@ -1,6 +1,6 @@
 package commitcapstone.commit.challenge.dto;
 
-import commitcapstone.commit.auth.entity.User;
+import commitcapstone.commit.user.User;
 import commitcapstone.commit.challenge.entity.Challenge;
 import commitcapstone.commit.challenge.entity.ChallengeType;
 import commitcapstone.commit.tier.TierType;
@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -23,6 +22,7 @@ public class ChallengeDetailResponse {
     private String challengeTitle;
     private String challengeDescription;
     private ChallengeType challengeType;
+    private int challengeImg; // 챌린지 이미지 (int로 변경, 실제 이미지 경로는 프론트에서 처리)
     private int challengeBetPoint;
     private int targetMinutes;
     private int totalAcheiveMinutes;
@@ -39,6 +39,7 @@ public class ChallengeDetailResponse {
     //사용자 정보
     private String userName;
     private TierType tier;
+    private int userProfile; // 사용자 프로필 이미지
 
     public static ChallengeDetailResponse from(Challenge challenge, User user, int participants) {
         return ChallengeDetailResponse.builder()
@@ -46,6 +47,7 @@ public class ChallengeDetailResponse {
                 .challengeTitle(challenge.getTitle())
                 .challengeDescription(challenge.getDescription())
                 .challengeType(challenge.getType())
+                .challengeImg(challenge.getChallengeImg())
                 .challengeBetPoint(challenge.getBetPoint())
                 .targetMinutes(challenge.getTargetMinutes())
                 .startDate(challenge.getStartDate())
@@ -57,6 +59,7 @@ public class ChallengeDetailResponse {
 
                 .userName(user.getName())
                 .tier(user.getTier())
+                .userProfile(user.getProfile())
                 .build();
     }
 
