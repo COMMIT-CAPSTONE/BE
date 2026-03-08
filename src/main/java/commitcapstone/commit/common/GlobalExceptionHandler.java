@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ExerException.class)
-    public ResponseEntity<ErrorResponse> handleOauthException(ExerException e) {
+    public ResponseEntity<ErrorResponse> handleExerException(ExerException e) {
         log.error("ExerException", e);
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus().value())
@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ChallengeException.class)
-    public ResponseEntity<ErrorResponse> handleOauthException(ChallengeException e) {
+    public ResponseEntity<ErrorResponse> handleChallengeException(ChallengeException e) {
         log.error("ExerException", e);
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus().value())
@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponse> handleOauthException(UserException e) {
+    public ResponseEntity<ErrorResponse> handlerUserException(UserException e) {
         log.error("ExerException", e);
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus().value())
