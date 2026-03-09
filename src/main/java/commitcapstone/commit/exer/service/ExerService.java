@@ -1,5 +1,7 @@
 package commitcapstone.commit.exer.service;
 
+import commitcapstone.commit.common.code.ExerErrorCode;
+import commitcapstone.commit.common.exception.ExerException;
 import commitcapstone.commit.user.User;
 import commitcapstone.commit.user.UserRepository;
 
@@ -50,7 +52,7 @@ public class ExerService {
     @Transactional
     public CheckOutResponse saveTimeAndPoint(String email, CheckOutRequest request){
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+                .orElseThrow(() -> new ExerException(ExerErrorCode.INVALID_TIME_TYPE));
 
         long min = request.getMin();
         LocalDate today = LocalDate.now();
@@ -86,7 +88,7 @@ public class ExerService {
     }
     public UserExerTimeStatResponse getExerTime(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+                .orElseThrow(() -> new ExerException(ExerErrorCode.INVALID_TIME_TYPE));
 
         LocalDate today = LocalDate.now();
         LocalDate weekStartDate = getWeekStartDate();

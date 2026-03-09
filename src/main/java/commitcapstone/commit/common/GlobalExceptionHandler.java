@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleException(Exception ex) {
-        ex.printStackTrace();  // 로그 남기기
+        log.error("Unexpected Exception", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse("서버 에러 발생" + ex.getMessage()));
+                .body(new ErrorResponse("서버 에러 발생: " + ex.getMessage()));
     }
     //통합 에러 처리
     @ExceptionHandler(OauthException.class)
@@ -39,15 +39,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ChallengeException.class)
     public ResponseEntity<ErrorResponse> handleChallengeException(ChallengeException e) {
-        log.error("ExerException", e);
+        log.error("ChallengeException", e);
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus().value())
                 .body(new ErrorResponse(e.getMessage()));
     }
 
     @ExceptionHandler(UserException.class)
-    public ResponseEntity<ErrorResponse> handlerUserException(UserException e) {
-        log.error("ExerException", e);
+    public ResponseEntity<ErrorResponse> handleUserException(UserException e) {
+        log.error("UserException", e);
         return ResponseEntity
                 .status(e.getErrorCode().getHttpStatus().value())
                 .body(new ErrorResponse(e.getMessage()));

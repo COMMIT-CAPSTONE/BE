@@ -43,13 +43,13 @@ public class ChallengeService {
 
     public ChallengeListResponse getMyChallenges(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
         ChallengeParticipant participant = challengeParticipantRepository.findByUserAndFinishedFalse(user)
-                .orElseThrow(() -> new IllegalArgumentException("진행 중인 챌린지가 없습니다."));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
         return challengeRepository.findById(participant.getChallenge().getId())
                 .map(ChallengeListResponse::from)
-                .orElseThrow(() -> new IllegalArgumentException("챌린지 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
     }
     public ChallengeService(UserRepository userRepository, ChallengeRepository challengeRepository, PointRepository pointRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, Utils utils) {
         this.userRepository = userRepository;
@@ -64,7 +64,7 @@ public class ChallengeService {
         public ChallengeCreateResponse saveChallenge(String email, ChallengeCreateRequest request) {
 
             User user = userRepository.findByEmail(email)
-                    .orElseThrow(() -> new IllegalArgumentException("User not found for email: " + email));
+                    .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
             int userPoint = pointRepository.findTotalPointByUserId(user.getId());
 
@@ -191,10 +191,10 @@ public class ChallengeService {
 
     public ChallengeDetailResponse getChallengeDetail(Long id, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + email));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
         Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
 
         int partiicipants = challengeParticipantRepository.countByChallenge(challenge);
@@ -230,7 +230,7 @@ public class ChallengeService {
             } else if (challenge.getType() == ChallengeType.TOTAL) {
                break;
             } else {
-                throw new IllegalArgumentException("Unknown challenge type: " + challenge.getType());
+                throw new ChallengeException(ChallengeErrorCode.UNKNOWN_CHALLENGE_TYPE);
 
             }
 
@@ -244,11 +244,11 @@ public class ChallengeService {
 
     public ChallengeJoinResponse joinChallenge(long id, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다." + email));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
 
         Challenge challenge = challengeRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("해당 챌린지가 존재하지 않습니다. id=" + id));
+                .orElseThrow(() -> new ChallengeException(ChallengeErrorCode.CHALLENGE_NOT_FOUND));
 
         if (challengeParticipantRepository.existsByUserAndFinishedFalse(user)) {
             throw new ChallengeException(ChallengeErrorCode.USER_HAVE_ONLY_ONE_CHALLENGE);

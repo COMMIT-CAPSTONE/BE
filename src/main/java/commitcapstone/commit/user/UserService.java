@@ -23,7 +23,7 @@ public class UserService {
 
     public UserInfoResponse getUserInfo(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         String username = user.getName();
         TierType tier = user.getTier();
@@ -36,7 +36,7 @@ public class UserService {
 
     public void updateUserName(String email, String newName) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (newName == null || newName.trim().isEmpty()) {
             throw new UserException(UserErrorCode.INVALID_USER_NAME);
@@ -56,7 +56,7 @@ public class UserService {
 
     public void updateUserProfile(String email, int newProfile) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with email: " + email));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
         if (newProfile < 0 || newProfile > 4) {
             throw new UserException(UserErrorCode.INVALID_PROFILE);

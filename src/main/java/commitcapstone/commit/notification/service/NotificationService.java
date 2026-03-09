@@ -39,7 +39,7 @@ public class NotificationService {
 
     public NotificationViewResponse getNotificationViews(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
 
 
         // 읽지 않은 알림 먼저(createdAt 오름차순), 그 다음 읽은 알림(createdAt 오름차순)

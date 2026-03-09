@@ -19,7 +19,13 @@ public enum ChallengeErrorCode implements ErrorCode {
     INVALID_CHALLENGE_PERIOD(HttpStatus.BAD_REQUEST, "챌린지 기간은 최소 3일 이상이어야 합니다."),
     INVALID_DAILY_GOAL_TIME(HttpStatus.BAD_REQUEST, "DAILY 챌린지의 목표 시간은 1시간 이상 24시간 이하로 설정해야 합니다."),
     INVALID_TOTAL_GOAL_TIME(HttpStatus.BAD_REQUEST, "TOTAL 챌린지의 목표 시간은 (일수 x 1시간) 이상으로 설정해야 합니다."),
-    ALREAY_START_CHALLENGE(HttpStatus.BAD_REQUEST, "이미 시작한 챌린지는 참여할 수 없습니다.");
+    ALREAY_START_CHALLENGE(HttpStatus.BAD_REQUEST, "이미 시작한 챌린지는 참여할 수 없습니다."),
+    UNKNOWN_CHALLENGE_TYPE(HttpStatus.BAD_REQUEST, "알 수 없는 챌린지 타입입니다."),
+
+    /*
+        404 NOT_FOUND
+     */
+    CHALLENGE_NOT_FOUND(HttpStatus.NOT_FOUND, "해당 챌린지를 찾을 수 없습니다.");
 
     private final HttpStatus httpStatus;
     private final String message;
