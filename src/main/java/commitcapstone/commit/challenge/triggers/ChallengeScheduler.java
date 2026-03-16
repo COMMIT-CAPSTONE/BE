@@ -11,6 +11,7 @@ import commitcapstone.commit.exer.repository.PointRepository;
 import commitcapstone.commit.exer.repository.WorkRepository;
 import commitcapstone.commit.notification.entity.NotificationType;
 import commitcapstone.commit.notification.service.NotificationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,23 +22,56 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Component
+@RequiredArgsConstructor
 public class ChallengeScheduler {
 
     private final ChallengeRepository challengeRepository;
-    private final ChallengeParticipantRepository participantRepository;
     private final ChallengeParticipantRepository challengeParticipantRepository;
     private final WorkRepository workRepository;
     private final PointRepository pointRepository;
     private final NotificationService notificationService;
 
-    public ChallengeScheduler(ChallengeRepository challengeRepository, ChallengeParticipantRepository participantRepository, ChallengeParticipantRepository challengeParticipantRepository, WorkRepository workRepository, PointRepository pointRepository, NotificationService notificationService) {
-        this.challengeRepository = challengeRepository;
-        this.participantRepository = participantRepository;
-        this.challengeParticipantRepository = challengeParticipantRepository;
-        this.workRepository = workRepository;
-        this.pointRepository = pointRepository;
-        this.notificationService = notificationService;
+    public boolean challengeResult(Challenge challenge, ChallengeParticipant participant) {
+        switch (challenge.getType()) {
+            case TOTAL:
+                return isSuccessTotalChallenge(challenge, participant);
+            case DAILY:
+                return isSuccessDailyChallenge(challenge, participant);
+            default:
+                return false;
+        }
+    }
+
+    private boolean isSuccessTotalChallenge(Challenge challenge, ChallengeParticipant participant) {
+        int totalMinutes = workRepository.getPeriodTotalTimeByUser(
+                participant.getUser().getId(),
+                challenge.getStartDate(),
+                challenge.getEndDate()
+        );
+        return totalMinutes >= challenge.getTargetMinutes();
+    }
+
+    private boolean isSuccessDailyChallenge(Challenge challenge, ChallengeParticipant participant) {
+        int totalDays = calculateTotalDays(challenge);
+        int successDays = countSuccessfulDays(challenge, participant);
+        return successDays == totalDays;
+    }
+
+    private int calculateTotalDays(Challenge challenge) {
+        return (int) ChronoUnit.DAYS.between(challenge.getStartDate(), challenge.getEndDate()) + 1;
+    }
+
+    private int countSuccessfulDays(Challenge challenge, ChallengeParticipant participant) {
+        int successCount = 0;
+        for (LocalDate date = challenge.getStartDate(); !date.isAfter(challenge.getEndDate()); date = date.plusDays(1)) {
+            int dailyDuration = workRepository.getTodayDuration(participant.getUser(), date);
+            if (dailyDuration >= challenge.getTargetMinutes()) {
+                successCount++;
+            }
+        }
+        return successCount;
     }
 
     @Scheduled(cron = "0 0 0 * * *")
@@ -54,26 +88,11 @@ public class ChallengeScheduler {
 
             ch.setFinished(true);
 
-            boolean isSuccess = false;
             List<ChallengeParticipant> participants = challengeParticipantRepository.findAllByChallenge(ch);
             for (ChallengeParticipant cp : participants) {
                 cp.setFinished(true);
 
-
-                if (ch.getType() == ChallengeType.TOTAL) {
-                    int total = workRepository.getPeriodTotalTimeByUser(cp.getUser().getId(), ch.getStartDate(), ch.getEndDate());
-                    isSuccess = total >= ch.getTargetMinutes();
-
-                } else if (ch.getType() == ChallengeType.DAILY) {
-                    int totalDays = (int) ChronoUnit.DAYS.between(ch.getStartDate(), ch.getEndDate()) + 1;
-                    int successCount = 0;
-
-                    for (LocalDate date = ch.getStartDate(); !date.isAfter(ch.getEndDate()); date = date.plusDays(1)) {
-                        int duration = workRepository.getTodayDuration(cp.getUser(), date);
-                        if (duration >= ch.getTargetMinutes()) successCount++;
-                    }
-                    isSuccess = successCount == totalDays;
-                }
+                boolean isSuccess = challengeResult(ch, cp);
 
                 if (isSuccess) {
                     successList.add(cp);
@@ -105,6 +124,21 @@ public class ChallengeScheduler {
                         .build();
 
                 pointRepository.save(point);
+            }
+
+            for (ChallengeParticipant cp : failList) {
+
+                cp.setSuccess(false);
+                notificationService.sendChallengeResultNotification(cp.getUser(), NotificationType.CHALLENGE, "[" + ch.getTitle() + "]챌린지에 실패하셨습니다." ,  ch.getBetPoint() + "포인트가 차감되었습니다.");
+
+              Point point = Point.builder()
+                  .point(-ch.getBetPoint())
+                  .user(cp.getUser())
+                  .type(PointType.CHALLENGE_FAIL)
+                  .earnedAt(LocalDateTime.now())
+                  .build();
+
+              pointRepository.save(point);
             }
         }
     }
